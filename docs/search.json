@@ -4,7 +4,56 @@
     "href": "index.html",
     "title": "SP",
     "section": "",
-    "text": "test\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
+    "text": "modeling\n\n\n\n\nTricks to transform a optimization model into a linear program\n\n\n\n\n\n\nNov 30, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquarto\n\n\n\n\nQuick introduction to use citation and footnotes in quarto\n\n\n\n\n\n\nNov 29, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html",
+    "href": "nbs/20221129_citation/index.html",
+    "title": "Citation and Footnotes in quarto",
+    "section": "",
+    "text": "footnotes:\n\nmarkdown footnote syntax (as I have to look this up regularly)\n\ncitations:\n\nexplain initial setup including a test\nexplain steps to generate citations and a bibliography with quarto"
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html#input",
+    "href": "nbs/20221129_citation/index.html#input",
+    "title": "Citation and Footnotes in quarto",
+    "section": "3.1 input",
+    "text": "3.1 input\nHere is a footnote reference,[^1] and another.[^longnote]\n\n[^1]: Here is the footnote.\n[^longnote]: Here's one with multiple blocks.\n\n    Subsequent paragraphs are indented to show that they\nbelong to the previous footnote.\n\n        { some.code }\n\n    The whole paragraph can be indented, or just the first\n    line.  In this way, multi-paragraph footnotes work like\n    multi-paragraph list items.\n\nThis paragraph won't be part of the note, because it\nisn't indented.\nRemark: The content of the footnote, e.g. [^1]: Here is the footnote. can be placed anywhere in the document. I usually put it at the end of the document, because some footnotes are used more than once."
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html#output",
+    "href": "nbs/20221129_citation/index.html#output",
+    "title": "Citation and Footnotes in quarto",
+    "section": "3.2 output",
+    "text": "3.2 output\nHere is a footnote reference,1 and another.2\nThis paragraph won’t be part of the note, because it isn’t indented."
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html#inline-footnote",
+    "href": "nbs/20221129_citation/index.html#inline-footnote",
+    "title": "Citation and Footnotes in quarto",
+    "section": "3.3 inline footnote",
+    "text": "3.3 inline footnote\nHere is an inline note.^[Inlines notes are easier to write,\nsince you don't have to pick an identifier and move down to\ntype the note.]\nHere is an inline note.3"
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html#bibliography-generation",
+    "href": "nbs/20221129_citation/index.html#bibliography-generation",
+    "title": "Citation and Footnotes in quarto",
+    "section": "5.1 Bibliography Generation",
+    "text": "5.1 Bibliography Generation\nSupose you want to add a new reference to your citation database references.bib, e.g. (Trotta et al. 2022). I usually do the following:\n\nopen google scholar\nsearch for your reference, e.g. “trotta routing on a ring”\nuse the nice link “citation” below the hit of google scholar and choose BibTex next\nsimply copy and paste the content to your references.bib file. The copied content will look like:\n\n@article{trotta2022pickup,\n  title={Pickup and delivery problems with autonomous vehicles on rings},\n  author={Trotta, Manuel and Archetti, Claudia and Feillet, Dominique and Quilliot, Alain},\n  journal={European Journal of Operational Research},\n  volume={300},\n  number={1},\n  pages={221--236},\n  year={2022},\n  publisher={Elsevier}\n}"
+  },
+  {
+    "objectID": "nbs/20221129_citation/index.html#add-a-citation-in-a-blog-document",
+    "href": "nbs/20221129_citation/index.html#add-a-citation-in-a-blog-document",
+    "title": "Citation and Footnotes in quarto",
+    "section": "5.2 Add a citation in a blog document",
+    "text": "5.2 Add a citation in a blog document\n\nMarkdown format for citation is [@citation]\nGiven example: [@trotta2022pickup] renders to (Trotta et al. 2022)\nThere are other markdown format for citation, e.g. @trotta2022pickup renders to Trotta et al. (2022). For more information just have a look at the sources below."
+  },
+  {
+    "objectID": "nbs/20221130_modeling_tips/index.html",
+    "href": "nbs/20221130_modeling_tips/index.html",
+    "title": "Linear programming tricks",
+    "section": "",
+    "text": "2 Summary\nIn this post we saw a number of tricks to transform special models into a linear program and mentioned typical applications. We saw how to handle absolute values, minimax objectives, fractional objectives and range contraints.\n\n\n\n\n\n\nReferences\n\nBisschop, Johannes. 2006. AIMMS Optimization Modeling. Lulu. com.\n\nFootnotes\n\n\nTricks for integer programming models will be part of another blog post.↩︎"
   },
   {
     "objectID": "nbs/20221127_jupyter_test/index.html",
