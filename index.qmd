@@ -1,7 +1,7 @@
 ---
-title: "blog"
+title: "SP"
 listing:
-  contents: posts
+  contents: nbs
   sort: "date desc"
   type: default
   categories: true
