@@ -1,4 +1,4 @@
-currently a test, as the old blog got some issues with nbdev
+currently a test, as the old blog got issues with nbdev
 
 # installation
 
