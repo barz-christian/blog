@@ -16,7 +16,6 @@ jobs:
         run : |
           sudo apt-get install -y libopenmpi-dev glpk-utils 
           sudo apt-get install gcc g++ gfortran git cmake liblapack-dev pkg-config --install-recommends
-          sudo apt-get install swig ipython python-dev python-numpy python-scipy python-matplotlib --install-recommends
           sudo apt-get install coinor-libipopt-dev
       - uses: fastai/workflows/nbdev-ci@master
       - uses: fastai/workflows/quarto-ghp@master
