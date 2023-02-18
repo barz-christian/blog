@@ -13,5 +13,8 @@ jobs:
         with:
           python-version: '3.9'
       - name: setup solver
-        run : sudo apt-get install -y libopenmpi-dev glpk-utils
+        run : |
+          sudo apt-get install -y libopenmpi-dev glpk-utils 
+          conda install -q -y --channel cachemeorg ipopt_bin
       - uses: fastai/workflows/nbdev-ci@master
+      - uses: fastai/workflows/quarto-ghp@master
