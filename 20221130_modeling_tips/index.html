@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="cbarz">
+<meta name="dcterms.date" content="2022-11-30">
+<meta name="description" content="Tricks to transform a optimization model into a linear program">
+
+<title>blog - Linear programming tricks</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="blog - Linear programming tricks">
+<meta property="og:description" content="Tricks to transform a optimization model into a linear program">
+<meta property="og:site-name" content="blog">
+<meta name="twitter:title" content="blog - Linear programming tricks">
+<meta name="twitter:description" content="Tricks to transform a optimization model into a linear program">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Linear programming tricks</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">blog</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../core.html" class="sidebar-item-text sidebar-link">core</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">github_actions</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../20220928_github_actions/index.html" class="sidebar-item-text sidebar-link">github actions</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">jupyter_test</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../20221127_jupyter_test/index.html" class="sidebar-item-text sidebar-link">Pyomo and solver test</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">citation</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../20221129_citation/index.html" class="sidebar-item-text sidebar-link">Citation and Footnotes in quarto</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">modeling_tips</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../20221130_modeling_tips/index.html" class="sidebar-item-text sidebar-link active">Linear programming tricks</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#linear-programming-tricks" id="toc-linear-programming-tricks" class="nav-link active" data-scroll-target="#linear-programming-tricks"><span class="toc-section-number">1</span>  Linear programming tricks</a>
+  <ul class="collapse">
+  <li><a href="#absolute-values" id="toc-absolute-values" class="nav-link" data-scroll-target="#absolute-values"><span class="toc-section-number">1.1</span>  Absolute values</a></li>
+  <li><a href="#a-minimax-objective" id="toc-a-minimax-objective" class="nav-link" data-scroll-target="#a-minimax-objective"><span class="toc-section-number">1.2</span>  A minimax objective</a></li>
+  <li><a href="#a-fractional-objective" id="toc-a-fractional-objective" class="nav-link" data-scroll-target="#a-fractional-objective"><span class="toc-section-number">1.3</span>  A fractional objective</a></li>
+  <li><a href="#a-range-constraint" id="toc-a-range-constraint" class="nav-link" data-scroll-target="#a-range-constraint"><span class="toc-section-number">1.4</span>  A range constraint</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="toc-section-number">2</span>  Summary</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/barz-christian/blog/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Linear programming tricks</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">modeling</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Tricks to transform a optimization model into a linear program
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>cbarz </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 30, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="linear-programming-tricks" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Linear programming tricks</h1>
+<p>In this post we will see several tricks to transform certain models, for example models with nonlinear, features, into a conventional linear programming model. Because linear programming model provide the fastest and most powerful solution methods, it is often advisable to use this format instead of solving a nonlinear or integer programming model<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> where possible.</p>
+<p>As in this blog I mainly focus on a quick problem and solution description, mathematical details are skipped. As I devoted a detailed post for probabilistic or chance constraints, chance constraints are not discussed here.</p>
+<p>For a more detailed presentation we refer to <span class="citation" data-cites="bisschop2006aimms">[@bisschop2006aimms, chapter 6.7]</span>.</p>
+<section id="absolute-values" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="absolute-values"><span class="header-section-number">1.1</span> Absolute values</h2>
+<p>Consider the following model: <span class="math display">\[
+\begin{array}{ll}
+\min &amp; \sum_i c_i |x_i| \\
+s.t. &amp; \sum_j a_{ij}x_j \leq b_i ,\; \forall i
+\end{array}
+\]</span></p>
+<p>Due to the presence of absolute values in the objective function we can not directly apply a linear programminng solver, but we can reformulate the problem as follows: <span class="math display">\[
+\begin{array}{cl}
+x_i = &amp; x_i^+ - x_i^- \\
+|x_i|=&amp; x_i^+ + x_i^-\\
+      &amp; x_i^+, x_i^- \geq 0
+\end{array}
+\]</span></p>
+<p>The above linear program can be rewritten as follows:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \sum_j c_j (x_j^+-x_j^-) \\
+s.t. &amp; \sum_j a_{ij}(x_j^+-x_j^-) \geq b_i ,\; \forall i \\
+     &amp; x_j^+, x_j^- \geq 0
+\end{array}
+\]</span></p>
+<p>Application: curve fitting, e.g.&nbsp;fitting a straight line through by least maximum deviation estimation.</p>
+</section>
+<section id="a-minimax-objective" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="a-minimax-objective"><span class="header-section-number">1.2</span> A minimax objective</h2>
+<p>Consider the following model:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \max_k \sum_j c_{kj}x_j \\
+s.t. &amp; \sum_j a_{ij}x_j \leq b_i ,\; \forall i\\
+     &amp; x_j \geq 0
+\end{array}
+\]</span></p>
+<p>In this objective we want to minimize a maximum. This is called a minimax objective.</p>
+<p>We represent the maximum by introducing an additional decision variable <span class="math inline">\(z\)</span>, which will represent the maximal costs, <span class="math display">\[
+z = \max \sum_j c_{kj}x_j
+\]</span></p>
+<p>and impose an extra constraint to establish the relationship:</p>
+<p><span class="math display">\[
+z \geq \sum_j c_{kj}x_j, \; \forall k
+\]</span></p>
+<p>The equivalent linear programm is:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; z \\
+s.t. &amp; \sum_j a_{ij}x_j \leq b_i ,\; \forall i\\
+     &amp; \sum_j c_{kj}x_j \leq z, \; \forall k \\
+     &amp; x_j \geq 0     
+\end{array}
+\]</span></p>
+<p>The problem ob maximizing a minimum can be reformulated in a similar fashion.</p>
+<p>Application: curve fitting, e.g.&nbsp;fitting a straight line through by least maximum deviation estimation.</p>
+</section>
+<section id="a-fractional-objective" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="a-fractional-objective"><span class="header-section-number">1.3</span> A fractional objective</h2>
+<p>Consider the following model:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \frac{\sum_j c_j x_j +\alpha}{\sum_j d_j x_j + \beta} \\
+s.t. &amp; \sum_j a_{ij}x_j \leq b_i ,\; \forall i\\
+     &amp; x_j \geq 0
+\end{array}
+\]</span></p>
+<p>Here the objective is given as a ratio of two linear terms. It is assumed that the denominator is either positive or negative over the entire feasible set of <span class="math inline">\(x_j\)</span>.</p>
+<p>The main trick is to introduce variables <span class="math inline">\(y_j\)</span> and <span class="math inline">\(t\)</span> such that <span class="math inline">\(y_j=tx_j\)</span>.</p>
+<p>In the following explanation, we assume the value of the denominator to be positive. If it is negative, the directions in the inequalities must be reversed. We introduce a new variable for the denominator <span class="math display">\[
+t:=\frac{1}{\sum_j d_j x_j + \beta}
+\]</span> and add an extra constraint <span class="math inline">\(t\geq 0\)</span>. This yields the following model</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \sum_j c_j x_j +\alpha t\\
+s.t. &amp; \sum_j a_{ij}x_j \leq b_i t,\; \forall i\\
+     &amp; \sum_j d_jy_j+\beta t = 1 \\
+     &amp; t \geq 0 \\
+     &amp; y_j \geq 0
+\end{array}
+\]</span></p>
+</section>
+<section id="a-range-constraint" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="a-range-constraint"><span class="header-section-number">1.4</span> A range constraint</h2>
+<p>Consider the following model:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \sum_j c_j x_j \\
+s.t. &amp; d_i \leq \sum_j a_{ij}x_j \leq e_i ,\; \forall i\\
+     &amp; x_j \geq 0
+\end{array}
+\]</span></p>
+<p>Application: blending problems, e.g.&nbsp;the minimal amout of a nutirent required in a blend and,at the same time, three is a limited amount available. The obvious way is to replace the range constraint by 2 constraints, but when a change occurs both constraints have to be maintained.</p>
+<p>We introduce new variables <span class="math inline">\(u_i\)</span> <span class="math display">\[
+u_i + \sum_j a_{ij}x_j =e_i ,\; \forall i
+\]</span> and impose the constraints <span class="math display">\[
+0 \leq u_i \leq e_i -d_i , \; \forall i
+\]</span></p>
+<p>The equivalent linear programm is:</p>
+<p><span class="math display">\[
+\begin{array}{ll}
+\min &amp; \sum_j c_j x_j \\
+s.t. &amp; u_i + \sum_j a_{ij}x_j =e_i ,\; \forall i \\
+     &amp; 0 \leq u_i \leq e_i -d_i , \; \forall i \\
+     &amp; x_j \geq 0
+\end{array}
+\]</span></p>
+</section>
+</section>
+<section id="summary" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Summary</h1>
+<p>In this post we saw a number of tricks to transform special models into a linear program and mentioned typical applications. We saw how to handle absolute values, minimax objectives, fractional objectives and range contraints.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Tricks for integer programming models will be part of another blog post.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
