@@ -15,7 +15,6 @@ jobs:
       - name: setup solver
         run : |
           sudo apt-get install -y libopenmpi-dev glpk-utils 
-          sudo apt-get install gcc g++ gfortran git cmake liblapack-dev pkg-config --install-recommends
-          sudo apt-get install coinor-libipopt-dev
+          conda install -q -y --channel cachemeorg ipopt_bin
       - uses: fastai/workflows/nbdev-ci@master
       - uses: fastai/workflows/quarto-ghp@master
