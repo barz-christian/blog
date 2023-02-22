@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="cbarz">
+<meta name="dcterms.date" content="2022-06-21">
+<meta name="description" content="Schedule jobs on a bottleneck machine and multiple machines">
+
+<title>../../blog - Job shop scheduling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">blog</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Job shop scheduling</h1>
+                  <div>
+        <div class="description">
+          Schedule jobs on a bottleneck machine and multiple machines
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">pyomo</div>
+                <div class="quarto-category">modeling</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>cbarz </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 21, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction---schedule-jobs-on-a-bottleneck-machine" id="toc-introduction---schedule-jobs-on-a-bottleneck-machine" class="nav-link active" data-scroll-target="#introduction---schedule-jobs-on-a-bottleneck-machine">Introduction - Schedule jobs on a bottleneck machine</a>
+  <ul class="collapse">
+  <li><a href="#optimal-vs.-empirical-schedules" id="toc-optimal-vs.-empirical-schedules" class="nav-link" data-scroll-target="#optimal-vs.-empirical-schedules">Optimal vs.&nbsp;empirical schedules</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  <li><a href="#gantt-charts" id="toc-gantt-charts" class="nav-link" data-scroll-target="#gantt-charts">GANTT charts</a></li>
+  </ul></li>
+  <li><a href="#empirical-schedules" id="toc-empirical-schedules" class="nav-link" data-scroll-target="#empirical-schedules">Empirical schedules</a>
+  <ul class="collapse">
+  <li><a href="#a-manual-schedule" id="toc-a-manual-schedule" class="nav-link" data-scroll-target="#a-manual-schedule">A Manual Schedule</a></li>
+  <li><a href="#alphabetic-schedule" id="toc-alphabetic-schedule" class="nav-link" data-scroll-target="#alphabetic-schedule">Alphabetic schedule</a></li>
+  <li><a href="#fifo---first-in-first-out" id="toc-fifo---first-in-first-out" class="nav-link" data-scroll-target="#fifo---first-in-first-out">FIFO - first in first out</a></li>
+  <li><a href="#lifo---last-in-first-out" id="toc-lifo---last-in-first-out" class="nav-link" data-scroll-target="#lifo---last-in-first-out">LIFO - last in first out</a></li>
+  <li><a href="#spt---shortest-processing-time" id="toc-spt---shortest-processing-time" class="nav-link" data-scroll-target="#spt---shortest-processing-time">SPT - shortest processing time</a></li>
+  <li><a href="#edd---earliest-due-date" id="toc-edd---earliest-due-date" class="nav-link" data-scroll-target="#edd---earliest-due-date">EDD - earliest due date</a></li>
+  </ul></li>
+  <li><a href="#optimal-schedules---one-machine" id="toc-optimal-schedules---one-machine" class="nav-link" data-scroll-target="#optimal-schedules---one-machine">Optimal schedules - one machine</a>
+  <ul class="collapse">
+  <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling">Modeling</a>
+  <ul class="collapse">
+  <li><a href="#sets" id="toc-sets" class="nav-link" data-scroll-target="#sets">Sets</a></li>
+  <li><a href="#parameter" id="toc-parameter" class="nav-link" data-scroll-target="#parameter">Parameter</a></li>
+  <li><a href="#decision-variables" id="toc-decision-variables" class="nav-link" data-scroll-target="#decision-variables">Decision variables</a></li>
+  <li><a href="#state-variables" id="toc-state-variables" class="nav-link" data-scroll-target="#state-variables">State variables</a></li>
+  <li><a href="#constraints" id="toc-constraints" class="nav-link" data-scroll-target="#constraints">Constraints</a></li>
+  <li><a href="#objective" id="toc-objective" class="nav-link" data-scroll-target="#objective">Objective</a></li>
+  </ul></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a>
+  <ul class="collapse">
+  <li><a href="#optimal-makespan" id="toc-optimal-makespan" class="nav-link" data-scroll-target="#optimal-makespan">Optimal <code>makespan</code></a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#optimal-sum-past-due" id="toc-optimal-sum-past-due" class="nav-link" data-scroll-target="#optimal-sum-past-due">Optimal <code>sum past due</code></a></li>
+  <li><a href="#optimal-schedules---multiple-machines" id="toc-optimal-schedules---multiple-machines" class="nav-link" data-scroll-target="#optimal-schedules---multiple-machines">Optimal schedules - multiple machines</a>
+  <ul class="collapse">
+  <li><a href="#modeling-1" id="toc-modeling-1" class="nav-link" data-scroll-target="#modeling-1">Modeling</a></li>
+  <li><a href="#sets-1" id="toc-sets-1" class="nav-link" data-scroll-target="#sets-1">Sets</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#variables" id="toc-variables" class="nav-link" data-scroll-target="#variables">Variables</a>
+  <ul class="collapse">
+  <li><a href="#decision-variables-1" id="toc-decision-variables-1" class="nav-link" data-scroll-target="#decision-variables-1">Decision variables</a></li>
+  <li><a href="#state-variables-1" id="toc-state-variables-1" class="nav-link" data-scroll-target="#state-variables-1">State variables</a></li>
+  <li><a href="#assignment-to-machines" id="toc-assignment-to-machines" class="nav-link" data-scroll-target="#assignment-to-machines">Assignment to machines</a></li>
+  <li><a href="#objective-vars" id="toc-objective-vars" class="nav-link" data-scroll-target="#objective-vars">Objective vars</a></li>
+  <li><a href="#constraints-1" id="toc-constraints-1" class="nav-link" data-scroll-target="#constraints-1">Constraints</a></li>
+  <li><a href="#constraints-explaination" id="toc-constraints-explaination" class="nav-link" data-scroll-target="#constraints-explaination">Constraints explaination</a></li>
+  </ul></li>
+  <li><a href="#example-scheduling-multiple-machines" id="toc-example-scheduling-multiple-machines" class="nav-link" data-scroll-target="#example-scheduling-multiple-machines">Example scheduling multiple machines</a></li>
+  <li><a href="#optimal-makespan---multiple-machines" id="toc-optimal-makespan---multiple-machines" class="nav-link" data-scroll-target="#optimal-makespan---multiple-machines">Optimal <code>makespan</code> - multiple machines</a></li>
+  </ul></li>
+  <li><a href="#optimal-sum-past-due---multiple-machines" id="toc-optimal-sum-past-due---multiple-machines" class="nav-link" data-scroll-target="#optimal-sum-past-due---multiple-machines">Optimal <code>sum past due</code> - multiple machines</a></li>
+  <li><a href="#discussion-one-machines" id="toc-discussion-one-machines" class="nav-link" data-scroll-target="#discussion-one-machines">Discussion one machines</a></li>
+  <li><a href="#discussion-multiple-machines" id="toc-discussion-multiple-machines" class="nav-link" data-scroll-target="#discussion-multiple-machines">Discussion multiple machines</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyomo.environ <span class="im">as</span> pyo</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyomo.gdp <span class="im">as</span> gdp</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="introduction---schedule-jobs-on-a-bottleneck-machine" class="level1">
+<h1>Introduction - Schedule jobs on a bottleneck machine</h1>
+<p>“What should be done next?” is a question one faces in many different situations. In this notebook we consider two scheduling problems:</p>
+<ol type="1">
+<li><p>A single machine determines the throughput of an entiry production, for example because only one machine of this type is available, its the slowest machine in a production line, etc. . Such a machine is called a bottleneck machine. We ask for an optimal job schedule for the bottleneck machine.</p></li>
+<li><p>We have multiple machines and a set of jobs for them and ask for an optimal job schedule for the machines.</p></li>
+</ol>
+<p>Moreover each job has a start date (release), a duration time and a due time.</p>
+<p>Our task is to find an optimal sequence of jobs, but we have not said <em>what an optimal schedule is.</em></p>
+<p>In practize there may be different answer to this question depending on the application and the circumstances. Hence we will consider the following key performance indicators (KPIs) to compare different schedules and measure their optimality</p>
+<ul>
+<li>makespan, i.e.&nbsp;minimizing the total duration of the schedule</li>
+<li>maximum of past due days among the jobs</li>
+<li>number of jobs past due</li>
+<li>number of jobs in time</li>
+<li>sum of past due days</li>
+<li>fraction of jobs on time</li>
+</ul>
+<p>This notebook is based on <span class="citation" data-cites="gueret1999applications">(<a href="#ref-gueret1999applications" role="doc-biblioref">Guéret, Prins, and Sevaux 1999, chap. 74</a>)</span> and <span class="citation" data-cites="PostekZocca2022">(<a href="#ref-PostekZocca2022" role="doc-biblioref">Postek et al. 2022</a>)</span>.</p>
+<section id="optimal-vs.-empirical-schedules" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-vs.-empirical-schedules">Optimal vs.&nbsp;empirical schedules</h2>
+<p>In order to see the benefit of mathematical optimization we proceed as follows:</p>
+<ol type="1">
+<li>We visualize and compute KPIs for certain empirical schedules.</li>
+<li>We visualize and compute KPIs for optimal schedules with respect to different KPIs.</li>
+<li>We determine an optimal solution for a given set of jobs and a given sets of machines.</li>
+</ol>
+</section>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>In our discussion we use the following example of jobs.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>jobs <span class="op">=</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'A'</span>: {<span class="st">'release'</span>:<span class="dv">2</span>, <span class="st">'duration'</span>: <span class="dv">5</span>, <span class="st">'due'</span>: <span class="dv">10</span>},</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'B'</span>: {<span class="st">'release'</span>:<span class="dv">5</span>, <span class="st">'duration'</span>: <span class="dv">6</span>, <span class="st">'due'</span>: <span class="dv">21</span>},</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'C'</span>: {<span class="st">'release'</span>:<span class="dv">4</span>, <span class="st">'duration'</span>: <span class="dv">8</span>, <span class="st">'due'</span>: <span class="dv">15</span>},</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'D'</span>: {<span class="st">'release'</span>:<span class="dv">0</span>, <span class="st">'duration'</span>: <span class="dv">4</span>, <span class="st">'due'</span>: <span class="dv">10</span>},</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'E'</span>: {<span class="st">'release'</span>:<span class="dv">0</span>, <span class="st">'duration'</span>: <span class="dv">2</span>, <span class="st">'due'</span>:  <span class="dv">5</span>},</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'F'</span>: {<span class="st">'release'</span>:<span class="dv">8</span>, <span class="st">'duration'</span>: <span class="dv">3</span>, <span class="st">'due'</span>: <span class="dv">15</span>},</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'G'</span>: {<span class="st">'release'</span>:<span class="dv">9</span>, <span class="st">'duration'</span>: <span class="dv">2</span>, <span class="st">'due'</span>: <span class="dv">22</span>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(jobs).T.rename(columns <span class="op">=</span> {<span class="st">'release'</span>: <span class="st">'release time'</span>, </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">'duration'</span>: <span class="st">'duration in hours'</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">'due'</span>:<span class="st">'due time'</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>release time</th>
+      <th>duration in hours</th>
+      <th>due time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>A</th>
+      <td>2</td>
+      <td>5</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>B</th>
+      <td>5</td>
+      <td>6</td>
+      <td>21</td>
+    </tr>
+    <tr>
+      <th>C</th>
+      <td>4</td>
+      <td>8</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <td>0</td>
+      <td>4</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>E</th>
+      <td>0</td>
+      <td>2</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>F</th>
+      <td>8</td>
+      <td>3</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>G</th>
+      <td>9</td>
+      <td>2</td>
+      <td>22</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="gantt-charts" class="level2">
+<h2 class="anchored" data-anchor-id="gantt-charts">GANTT charts</h2>
+<p>Schedules can be visualised using GANTT charts. In the next cells we define some helper functions, for example to plot a Gantt chart.</p>
+<p>Afterwards we consider empirical schedules, in particular we consider:</p>
+<ul>
+<li>First-In First-Out (FIFO)</li>
+<li>Last-In, First-Out (LIFO)</li>
+<li>Shortest Processing Time First (SPT)</li>
+<li>Earliest Due Data (EDD)</li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># copy and pasted from jeffrey !</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gantt(JOBS, SCHEDULE<span class="op">=</span>{}):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    bw <span class="op">=</span> <span class="fl">0.3</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="fl">0.7</span><span class="op">*</span>(<span class="bu">len</span>(JOBS.keys()))))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">sorted</span>(JOBS.keys()):</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> JOBS[j][<span class="st">'release'</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> JOBS[j][<span class="st">'due'</span>]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        plt.fill_between([x,y],[idx<span class="op">-</span>bw,idx<span class="op">-</span>bw],[idx<span class="op">+</span>bw,idx<span class="op">+</span>bw], color<span class="op">=</span><span class="st">'cyan'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> j <span class="kw">in</span> SCHEDULE.keys():</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> SCHEDULE[j][<span class="st">'start'</span>]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> SCHEDULE[j][<span class="st">'finish'</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            plt.fill_between([x,y],[idx<span class="op">-</span>bw,idx<span class="op">-</span>bw],[idx<span class="op">+</span>bw,idx<span class="op">+</span>bw], color<span class="op">=</span><span class="st">'red'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            plt.plot([x,y,y,x,x], [idx<span class="op">-</span>bw,idx<span class="op">-</span>bw,idx<span class="op">+</span>bw,idx<span class="op">+</span>bw,idx<span class="op">-</span>bw],color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            plt.text((SCHEDULE[j][<span class="st">'start'</span>] <span class="op">+</span> SCHEDULE[j][<span class="st">'finish'</span>])<span class="op">/</span><span class="fl">2.0</span>,idx,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Job '</span> <span class="op">+</span> j, color<span class="op">=</span><span class="st">'white'</span>, weight<span class="op">=</span><span class="st">'bold'</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                horizontalalignment<span class="op">=</span><span class="st">'center'</span>, verticalalignment<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        idx <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    plt.ylim(<span class="op">-</span><span class="fl">0.5</span>, idx<span class="op">-</span><span class="fl">0.5</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Job Schedule'</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Time'</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Jobs'</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    plt.yticks(<span class="bu">range</span>(<span class="bu">len</span>(JOBS)), JOBS.keys())</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    plt.grid()</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    xlim <span class="op">=</span> plt.xlim()</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> SCHEDULE:</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> SCHEDULE.keys():</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">'machine'</span> <span class="kw">not</span> <span class="kw">in</span> SCHEDULE[j].keys():</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                SCHEDULE[j][<span class="st">'machine'</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        MACHINES <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">set</span>([SCHEDULE[j][<span class="st">'machine'</span>] <span class="cf">for</span> j <span class="kw">in</span> SCHEDULE.keys()]))</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="fl">0.7</span><span class="op">*</span><span class="bu">len</span>(MACHINES)))</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">sorted</span>(SCHEDULE.keys()):</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            idx <span class="op">=</span> MACHINES.index(SCHEDULE[j][<span class="st">'machine'</span>])</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> SCHEDULE[j][<span class="st">'start'</span>]</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            y <span class="op">=</span> SCHEDULE[j][<span class="st">'finish'</span>]</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            plt.fill_between([x,y],[idx<span class="op">-</span>bw,idx<span class="op">-</span>bw],[idx<span class="op">+</span>bw,idx<span class="op">+</span>bw], color<span class="op">=</span><span class="st">'red'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>            plt.plot([x,y,y,x,x], [idx<span class="op">-</span>bw,idx<span class="op">-</span>bw,idx<span class="op">+</span>bw,idx<span class="op">+</span>bw,idx<span class="op">-</span>bw],color<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>            plt.text((SCHEDULE[j][<span class="st">'start'</span>] <span class="op">+</span> SCHEDULE[j][<span class="st">'finish'</span>])<span class="op">/</span><span class="fl">2.0</span>,idx,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">'Job '</span> <span class="op">+</span> j, color<span class="op">=</span><span class="st">'white'</span>, weight<span class="op">=</span><span class="st">'bold'</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                horizontalalignment<span class="op">=</span><span class="st">'center'</span>, verticalalignment<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        plt.xlim(xlim)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        plt.ylim(<span class="op">-</span><span class="fl">0.5</span>, <span class="bu">len</span>(MACHINES)<span class="op">-</span><span class="fl">0.5</span>)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Machine Schedule'</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        plt.yticks(<span class="bu">range</span>(<span class="bu">len</span>(MACHINES)), MACHINES)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        plt.ylabel(<span class="st">'Machines'</span>)</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        plt.grid()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># jeffrery's code !</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> schedule(JOBS, order):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Schedule a dictionary of JOBS on a single machine in a specified order."""</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    finish <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    SCHEDULE <span class="op">=</span> {}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> job <span class="kw">in</span> order:</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> <span class="bu">max</span>(JOBS[job][<span class="st">'release'</span>], finish)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        finish <span class="op">=</span> start <span class="op">+</span> JOBS[job][<span class="st">'duration'</span>]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        SCHEDULE[job] <span class="op">=</span> {<span class="st">'start'</span>: start, <span class="st">'finish'</span>: finish}</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SCHEDULE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mainly jeffrery's code !</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> schedule_from_model(m, machines <span class="op">=</span> <span class="dv">1</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    SCHEDULE <span class="op">=</span> {}</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> m.jobs:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> machines <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            tmp <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            tmp <span class="op">=</span> [mach <span class="cf">for</span> mach <span class="kw">in</span> machines <span class="cf">if</span> pyo.value(m.job_to_machine[j,mach]) <span class="op">==</span> <span class="dv">1</span>][<span class="dv">0</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        SCHEDULE[j] <span class="op">=</span> {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">'start'</span>: m.start[j](), </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">'finish'</span>: m.start[j]() <span class="op">+</span> m.duration[j],</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">'machine'</span>: tmp</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SCHEDULE</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># jeffreys code</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">## KPI for job schedule</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kpi(JOBS, SCHEDULE):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    KPI <span class="op">=</span> {}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Makespan'</span>] <span class="op">=</span> <span class="bu">max</span>(SCHEDULE[job][<span class="st">'finish'</span>] <span class="cf">for</span> job <span class="kw">in</span> SCHEDULE)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Max Pastdue'</span>] <span class="op">=</span> <span class="bu">max</span>(<span class="bu">max</span>(<span class="dv">0</span>, SCHEDULE[job][<span class="st">'finish'</span>] <span class="op">-</span> JOBS[job][<span class="st">'due'</span>]) <span class="cf">for</span> job <span class="kw">in</span> SCHEDULE)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Sum of Pastdue'</span>] <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">max</span>(<span class="dv">0</span>, SCHEDULE[job][<span class="st">'finish'</span>] <span class="op">-</span> JOBS[job][<span class="st">'due'</span>]) <span class="cf">for</span> job <span class="kw">in</span> SCHEDULE)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Number Pastdue'</span>] <span class="op">=</span> <span class="bu">sum</span>(SCHEDULE[job][<span class="st">'finish'</span>] <span class="op">&gt;</span> JOBS[job][<span class="st">'due'</span>] <span class="cf">for</span> job <span class="kw">in</span> SCHEDULE)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Number on Time'</span>] <span class="op">=</span> <span class="bu">sum</span>(SCHEDULE[job][<span class="st">'finish'</span>] <span class="op">&lt;=</span> JOBS[job][<span class="st">'due'</span>] <span class="cf">for</span> job <span class="kw">in</span> SCHEDULE)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    KPI[<span class="st">'Fraction on Time'</span>] <span class="op">=</span> KPI[<span class="st">'Number on Time'</span>]<span class="op">/</span><span class="bu">len</span>(SCHEDULE)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> KPI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="empirical-schedules" class="level1">
+<h1>Empirical schedules</h1>
+<section id="a-manual-schedule" class="level2">
+<h2 class="anchored" data-anchor-id="a-manual-schedule">A Manual Schedule</h2>
+<p>By specifying schedules we can evaluate and compare them. The following snippet shows how the user can specify a schedule and judge its performance through the KPIs.</p>
+<p>We invite the reader to spend some minutes trying to find a better schedule. Spoiler: The given schedule here is already optimal in a way we will see later.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define schedule</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>job_order <span class="op">=</span> [<span class="st">'E'</span>,<span class="st">'A'</span>,<span class="st">'D'</span>,<span class="st">'F'</span>,<span class="st">'B'</span>,<span class="st">'G'</span>,<span class="st">'C'</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># visualize schedule</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule(jobs, order<span class="op">=</span>job_order)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30,
+ 'Max Pastdue': 15,
+ 'Sum of Pastdue': 16,
+ 'Number Pastdue': 2,
+ 'Number on Time': 5,
+ 'Fraction on Time': 0.7142857142857143}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-8-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="alphabetic-schedule" class="level2">
+<h2 class="anchored" data-anchor-id="alphabetic-schedule">Alphabetic schedule</h2>
+<p>Lets assume the schedule is given by the names of the Jobs. This chould represent a case in which the schedule is predefined through its names by a human or by previous processes.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule(jobs, order<span class="op">=</span><span class="bu">sorted</span>(jobs.keys()))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 32,
+ 'Max Pastdue': 22,
+ 'Sum of Pastdue': 68,
+ 'Number Pastdue': 5,
+ 'Number on Time': 2,
+ 'Fraction on Time': 0.2857142857142857}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-9-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-9-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="fifo---first-in-first-out" class="level2">
+<h2 class="anchored" data-anchor-id="fifo---first-in-first-out">FIFO - first in first out</h2>
+<p>We evaluate a schedule, in which the ordering is defined by the release time of the job, i.e.&nbsp;what comes first is done first.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fifo(JOBS):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    order_by_release <span class="op">=</span> <span class="bu">sorted</span>(JOBS, key<span class="op">=</span><span class="kw">lambda</span> job: JOBS[job][<span class="st">'release'</span>])</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> schedule(JOBS, order_by_release)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>gantt(jobs, fifo(jobs))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>kpi(jobs, fifo(jobs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30,
+ 'Max Pastdue': 13,
+ 'Sum of Pastdue': 31,
+ 'Number Pastdue': 6,
+ 'Number on Time': 1,
+ 'Fraction on Time': 0.14285714285714285}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-10-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-10-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="lifo---last-in-first-out" class="level2">
+<h2 class="anchored" data-anchor-id="lifo---last-in-first-out">LIFO - last in first out</h2>
+<p>We put the jobs on a stack as follows: At time <span class="math inline">\(t\)</span> we put all jobs with release time equal to <span class="math inline">\(t\)</span> on top of the stack. If the machine has a free capacity, we assign the job which is on top of the stack to the machine and remove the job from the stack.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lifo(JOBS):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    unfinished_jobs <span class="op">=</span> <span class="bu">set</span>(JOBS.keys())</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="bu">len</span>(unfinished_jobs) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> <span class="bu">max</span>(start, <span class="bu">min</span>(JOBS[job][<span class="st">'release'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        lifo <span class="op">=</span> {job:JOBS[job][<span class="st">'release'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs <span class="cf">if</span> JOBS[job][<span class="st">'release'</span>] <span class="op">&lt;=</span> start}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        job <span class="op">=</span> <span class="bu">max</span>(lifo, key<span class="op">=</span>lifo.get)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        finish <span class="op">=</span> start <span class="op">+</span> JOBS[job][<span class="st">'duration'</span>]</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        unfinished_jobs.remove(job)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        SCHEDULE[job] <span class="op">=</span> {<span class="st">'machine'</span>: <span class="dv">1</span>, <span class="st">'start'</span>: start, <span class="st">'finish'</span>: finish}</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> finish</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SCHEDULE          </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>gantt(jobs, lifo(jobs))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>kpi(jobs, lifo(jobs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30,
+ 'Max Pastdue': 20,
+ 'Sum of Pastdue': 34,
+ 'Number Pastdue': 3,
+ 'Number on Time': 4,
+ 'Fraction on Time': 0.5714285714285714}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-11-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="spt---shortest-processing-time" class="level2">
+<h2 class="anchored" data-anchor-id="spt---shortest-processing-time">SPT - shortest processing time</h2>
+<p>Shortest processing time (SPT) is a scheduling policy that selects for execution the waiting job with the smallest execution time.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> spt(JOBS):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    unfinished_jobs <span class="op">=</span> <span class="bu">set</span>(JOBS.keys())</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="bu">len</span>(unfinished_jobs) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> <span class="bu">max</span>(start, <span class="bu">min</span>(JOBS[job][<span class="st">'release'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        spt <span class="op">=</span> {job:JOBS[job][<span class="st">'duration'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs <span class="cf">if</span> JOBS[job][<span class="st">'release'</span>] <span class="op">&lt;=</span> start}</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        job <span class="op">=</span> <span class="bu">min</span>(spt, key<span class="op">=</span>spt.get)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        finish <span class="op">=</span> start <span class="op">+</span> JOBS[job][<span class="st">'duration'</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        unfinished_jobs.remove(job)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        SCHEDULE[job] <span class="op">=</span> {<span class="st">'machine'</span>: <span class="dv">1</span>, <span class="st">'start'</span>: start, <span class="st">'finish'</span>: finish}</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> finish</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SCHEDULE          </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>gantt(jobs, spt(jobs))</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>kpi(jobs, spt(jobs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30,
+ 'Max Pastdue': 15,
+ 'Sum of Pastdue': 18,
+ 'Number Pastdue': 4,
+ 'Number on Time': 3,
+ 'Fraction on Time': 0.42857142857142855}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-12-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="edd---earliest-due-date" class="level2">
+<h2 class="anchored" data-anchor-id="edd---earliest-due-date">EDD - earliest due date</h2>
+<p>Earliest due date (EDD) is a dynamic priority scheduling algorithm used in real-time operating systems to place processes in a priority queue. Whenever a scheduling event occurs (task finishes, new task released, etc.) the queue will be searched for the process closest to its deadline.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> edd(JOBS):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    unfinished_jobs <span class="op">=</span> <span class="bu">set</span>(JOBS.keys())</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="bu">len</span>(unfinished_jobs) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> <span class="bu">max</span>(start, <span class="bu">min</span>(JOBS[job][<span class="st">'release'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs))</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        edd <span class="op">=</span> {job:JOBS[job][<span class="st">'due'</span>] <span class="cf">for</span> job <span class="kw">in</span> unfinished_jobs <span class="cf">if</span> JOBS[job][<span class="st">'release'</span>] <span class="op">&lt;=</span> start}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        job <span class="op">=</span> <span class="bu">min</span>(edd, key<span class="op">=</span>edd.get)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        finish <span class="op">=</span> start <span class="op">+</span> JOBS[job][<span class="st">'duration'</span>]</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        unfinished_jobs.remove(job)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        SCHEDULE[job] <span class="op">=</span> {<span class="st">'machine'</span>: <span class="dv">1</span>, <span class="st">'start'</span>: start, <span class="st">'finish'</span>: finish}</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        start <span class="op">=</span> finish</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> SCHEDULE          </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>gantt(jobs, edd(jobs))</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>kpi(jobs, edd(jobs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30,
+ 'Max Pastdue': 8,
+ 'Sum of Pastdue': 27,
+ 'Number Pastdue': 5,
+ 'Number on Time': 2,
+ 'Fraction on Time': 0.2857142857142857}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-13-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-13-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="optimal-schedules---one-machine" class="level1">
+<h1>Optimal schedules - one machine</h1>
+<section id="modeling" class="level2">
+<h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
+<p>We give a algebraic representation of the model.</p>
+<section id="sets" class="level3">
+<h3 class="anchored" data-anchor-id="sets">Sets</h3>
+<ul>
+<li><span class="math inline">\(J\)</span> set of unique job IDs <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(order:= \{(i,j)~|~i,j\in J\}\)</span> - used to define weather job <span class="math inline">\(j\)</span> is executed before job <span class="math inline">\(i\)</span> or not</li>
+</ul>
+</section>
+<section id="parameter" class="level3">
+<h3 class="anchored" data-anchor-id="parameter">Parameter</h3>
+<ul>
+<li><span class="math inline">\(due_j\)</span> due time of job <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(duration_j\)</span> duration of job <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(release_j\)</span> time job <span class="math inline">\(j\)</span> becomes available for processing</li>
+</ul>
+</section>
+<section id="decision-variables" class="level3">
+<h3 class="anchored" data-anchor-id="decision-variables">Decision variables</h3>
+<ul>
+<li><span class="math inline">\(start_j\)</span> start of job <span class="math inline">\(j\)</span></li>
+</ul>
+</section>
+<section id="state-variables" class="level3">
+<h3 class="anchored" data-anchor-id="state-variables">State variables</h3>
+<ul>
+<li><span class="math inline">\(finished_j\)</span> time by which job <span class="math inline">\(j\)</span> finishes</li>
+<li><span class="math inline">\(pastdue_j\)</span> time by which job <span class="math inline">\(j\)</span> is past due</li>
+<li><span class="math inline">\(early_j\)</span> time by which job <span class="math inline">\(j\)</span> is finished early</li>
+</ul>
+</section>
+<section id="constraints" class="level3">
+<h3 class="anchored" data-anchor-id="constraints">Constraints</h3>
+<ol type="1">
+<li>job can not start until it is released for processing</li>
+</ol>
+<p><span class="math display">\[
+start_j\geq release_j
+\]</span></p>
+<ol start="2" type="1">
+<li>expressing timeline and how time variables are related</li>
+</ol>
+<p><span class="math display">\[
+\begin{array}{rl}
+start_j + duration_j + early_j &amp;= due_j + pastdue_j \\
+early_j &amp; \geq 0 \\
+pastdue_j &amp; \geq 0
+\end{array}
+\]</span></p>
+<ol start="3" type="1">
+<li>definition of the objective <code>makespan</code></li>
+</ol>
+<p><span class="math display">\[
+finish_j \leq makespan
+\]</span></p>
+<ol start="4" type="1">
+<li>definition of state variable <code>finish_j</code></li>
+</ol>
+<p><span class="math display">\[
+start_j + duration_j = finish_j
+\]</span></p>
+<ol start="5" type="1">
+<li>No pair of jobs operates on the same machine at the same time.</li>
+</ol>
+<p>This can be easily express as a set of disjunctions as follows:</p>
+<p><span class="math display">\[
+\left[finish_i \leq start_j \right] \vee \left[finish_j \leq start_i \right], \; \forall i&lt;j
+\]</span></p>
+</section>
+<section id="objective" class="level3">
+<h3 class="anchored" data-anchor-id="objective">Objective</h3>
+<p>As we have mentioned in the introduction the application and circumstances define what an optimal schedule is.</p>
+</section>
+</section>
+<section id="implementation" class="level2">
+<h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
+<p>The following implementation allows optimizing with respect to the following objectives: - <code>makespan</code>, i.e.&nbsp;the time to complete all jobs - <code>sum_pastdue</code>, i.e.&nbsp;sum of past due</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> model_1_machine(jobs, optimize <span class="op">=</span> <span class="st">"makespan"</span>):</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    m.jobs <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> jobs.keys())</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    m.order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.jobs <span class="op">*</span> m.jobs, dimen <span class="op">=</span> <span class="dv">2</span>, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j : i <span class="op">&lt;</span> j)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># parameters</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job due time"</span>)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> due(m,i):</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'due'</span>]</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job duration time"</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> duration(m,i):</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'duration'</span>]</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job release time"</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> release(m,i):</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'release'</span>]</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># upper bound on decision variables, in this case we choose the worst case </span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    max_time <span class="op">=</span> <span class="bu">sum</span>(m.duration[i] <span class="cf">for</span> i <span class="kw">in</span> m.jobs) <span class="op">+</span> <span class="bu">max</span>(m.release[i] <span class="cf">for</span> i <span class="kw">in</span> m.jobs)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># decision variables</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    m.start <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>, max_time))</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">## additional variables</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    m.finish <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>, max_time))</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    m.pastdue <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>, max_time))</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    m.early <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,max_time))</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># addtional variables for objectives</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    m.makespan <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>, max_time), doc <span class="op">=</span> <span class="st">"time until all jobs are done"</span>)</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>    m.maxpastdue <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,max_time), doc <span class="op">=</span> <span class="st">"time"</span>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>    m.ispastdue <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.Binary)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> optimize <span class="op">==</span> <span class="st">'makespan'</span>:</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.makespan, sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> optimize <span class="op">==</span> <span class="st">'sum_pastdue'</span>:</span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> <span class="bu">sum</span>([m.pastdue[i] <span class="cf">for</span> i <span class="kw">in</span> m.jobs]), sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'wrong value for parameter optimize. allowed are "makespan" or "sum_pastdue" optimize = makespan used instead.'</span>)</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.makespan, sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs)</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> job_finish(m,i, doc <span class="op">=</span> <span class="st">"defines job time finish"</span>):</span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.finish[i] <span class="op">==</span> m.start[i] <span class="op">+</span> m.duration[i]</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"release before start"</span>)</span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> start_after_release(m,i):</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.start[i] <span class="op">&gt;=</span> m.release[i]</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span><span class="st">"describe position of job w.r.t. time in schedule"</span>)</span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> time_relations(m,i):</span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.start[i] <span class="op">+</span> m.duration[i] <span class="op">+</span> m.early[i] <span class="op">==</span> m.due[i] <span class="op">+</span> m.pastdue[i]</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"finish time lower than make span"</span>)</span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> finish_lower_makespan(m,i):</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.finish[i] <span class="op">&lt;=</span> m.makespan</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>    m.schedule <span class="op">=</span> gdp.Disjunction(m.order, rule <span class="op">=</span> <span class="kw">lambda</span> m,i,j:</span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>                                [m.finish[i] <span class="op">&lt;=</span> m.start[j],</span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>                                 m.finish[j] <span class="op">&lt;=</span> m.start[i]])</span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"past due lower than max past due"</span>)</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> pastdue_lower_maxpastdue(m,i):</span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.pastdue[i] <span class="op">&lt;=</span> m.maxpastdue</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span><span class="st">""</span>)</span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> pastdue_lower_max_time(m,i):</span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.pastdue[i] <span class="op">&lt;=</span> max_time <span class="op">*</span> m.ispastdue[i]</span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">'gdp.hull'</span>).apply_to(m)</span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>    pyo.SolverFactory(<span class="st">'glpk'</span>).solve(m)<span class="co">#.write()</span></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="optimal-makespan" class="level3">
+<h3 class="anchored" data-anchor-id="optimal-makespan">Optimal <code>makespan</code></h3>
+<p>By defintion <code>makespan</code> is the time to complete all jobs.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_1_machine(jobs, optimize <span class="op">=</span> <span class="st">"makespan"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule_from_model(model)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30.0,
+ 'Max Pastdue': 11.0,
+ 'Sum of Pastdue': 29.0,
+ 'Number Pastdue': 3,
+ 'Number on Time': 4,
+ 'Fraction on Time': 0.5714285714285714}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-15-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="optimal-sum-past-due" class="level1">
+<h1>Optimal <code>sum past due</code></h1>
+<p>By definition <code>sum_pastdue</code> is sum of the times the jobs are past due.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_1_machine(jobs, optimize <span class="op">=</span> <span class="st">"sum_pastdue"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule_from_model(model)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 30.0,
+ 'Max Pastdue': 15.0,
+ 'Sum of Pastdue': 16.0,
+ 'Number Pastdue': 2,
+ 'Number on Time': 5,
+ 'Fraction on Time': 0.7142857142857143}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-16-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-16-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="optimal-schedules---multiple-machines" class="level1">
+<h1>Optimal schedules - multiple machines</h1>
+<p>Because the previous model can be extended to multiple machines easily we include this case in this notebook.</p>
+<section id="modeling-1" class="level2">
+<h2 class="anchored" data-anchor-id="modeling-1">Modeling</h2>
+<p>The algebraic representation of the model is the following:</p>
+</section>
+<section id="sets-1" class="level2">
+<h2 class="anchored" data-anchor-id="sets-1">Sets</h2>
+<ul>
+<li><span class="math inline">\(machines\)</span> - elements are abbreviated with <span class="math inline">\(m\)</span></li>
+<li><span class="math inline">\(jobs\)</span> - elements are abbreviated with <span class="math inline">\(j\)</span> or <span class="math inline">\(i\)</span></li>
+<li><span class="math inline">\(order:= jobs \times jobs\)</span> - schedule order of jobs</li>
+</ul>
+</section>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<ul>
+<li><span class="math inline">\(release_j\)</span></li>
+<li><span class="math inline">\(duration_j\)</span></li>
+<li><span class="math inline">\(due_j\)</span></li>
+<li><span class="math inline">\(BigM\)</span> - big M integer in modeling the disjunctions</li>
+</ul>
+</section>
+<section id="variables" class="level2">
+<h2 class="anchored" data-anchor-id="variables">Variables</h2>
+<section id="decision-variables-1" class="level3">
+<h3 class="anchored" data-anchor-id="decision-variables-1">Decision variables</h3>
+<ul>
+<li><span class="math inline">\(start_i\)</span> - time job <span class="math inline">\(i\)</span> starts</li>
+<li><span class="math inline">\(job\_to\_machine_{j,m}\)</span> - binary variable, 1 iff job <span class="math inline">\(j\)</span> is assigned to machine <span class="math inline">\(m\)</span></li>
+</ul>
+</section>
+<section id="state-variables-1" class="level3">
+<h3 class="anchored" data-anchor-id="state-variables-1">State variables</h3>
+<ul>
+<li><span class="math inline">\(pastdue_i\)</span> - time job <span class="math inline">\(i\)</span> is past due</li>
+<li><span class="math inline">\(early_i\)</span> - time job <span class="math inline">\(i\)</span> is finished early</li>
+</ul>
+</section>
+<section id="assignment-to-machines" class="level3">
+<h3 class="anchored" data-anchor-id="assignment-to-machines">Assignment to machines</h3>
+<ul>
+<li><span class="math inline">\(\text{job_to_machine}_{j,m}\)</span> - binary assingment of jobs to machine; <span class="math inline">\(\text{job_to_machine}_{j,m}==1\)</span> iff job <span class="math inline">\(j\)</span> is executed on <span class="math inline">\(m\)</span></li>
+</ul>
+</section>
+<section id="objective-vars" class="level3">
+<h3 class="anchored" data-anchor-id="objective-vars">Objective vars</h3>
+<ul>
+<li>makespan - non negative real</li>
+<li>ispastdue - binary, 1 iff job finish past due</li>
+<li>maxpastdue - non negative real</li>
+</ul>
+</section>
+<section id="constraints-1" class="level3">
+<h3 class="anchored" data-anchor-id="constraints-1">Constraints</h3>
+<p>Because the following model should work for different objective functions some constraints might be unused for a given objective function, but we believe it is easy to identify them.</p>
+<p><span class="math display">\[
+\begin{array}{llc}
+  start_j \geq release_j &amp; \;\forall j\in jobs &amp; c_1\\
+  start_j + duration_j + early_j = due_j + pastdue_j &amp; \;\forall j\in jobs &amp;c_2\\
+  [early_j==0] \vee [pastdue_j == 0] &amp; \;\forall j\in jobs &amp; d_1\\
+  [pastdue_j == 0] \vee [ispastdue_j == 1] &amp; \;\forall j\in jobs &amp; d_2\\
+  \sum_m jobs\_to\_machine_{j,m} = 1 &amp; \;\forall j\in jobs, \forall m \in machines &amp; c_3\\
+  pastdue_j &lt;= maxpastdue &amp; \;\forall j\in jobs &amp; c_4\\
+  start_j + duration_j &lt;= makespan &amp; \;\forall j\in jobs &amp; c_5\\
+  [T1] \vee_{i,j,m} [T2] &amp; \;\forall i,j \in order, \forall m \in machines &amp; d_3
+\end{array}
+\]</span></p>
+<p>where <span class="math display">\[
+\begin{array}{c}
+T1 := start_i + duration_i \leq start_j + M(1-jobs\_to\_machine_{i,m}) +  M(1-jobs\_to\_machine_{j,m})\\
+T2 := start_j + duration_j \leq start_i + M(1-jobs\_to\_machine_{i,m}) +  M(1-jobs\_to\_machine_{j,m})
+\end{array}
+\]</span></p>
+</section>
+<section id="constraints-explaination" class="level3">
+<h3 class="anchored" data-anchor-id="constraints-explaination">Constraints explaination</h3>
+<ul>
+<li><span class="math inline">\(c_1\)</span> job starts after its release</li>
+<li><span class="math inline">\(c_2\)</span> relation among time variables - required because not all jobs may finish before their due time</li>
+<li><span class="math inline">\(d_1\)</span> job is either early or pastdue</li>
+<li><span class="math inline">\(d_2\)</span> definition of objective variable ispastdue</li>
+<li><span class="math inline">\(c_3\)</span> each job is assign to one and only one machine</li>
+<li><span class="math inline">\(c_4\)</span> definition of objective variable maxpastdue</li>
+<li><span class="math inline">\(c_5\)</span> definition of objective variable makespan</li>
+<li><span class="math inline">\(d_3\)</span> job <span class="math inline">\(j\)</span> does not start before previous job <span class="math inline">\(i\)</span> has finished on machine <span class="math inline">\(m\)</span></li>
+</ul>
+</section>
+</section>
+<section id="example-scheduling-multiple-machines" class="level2">
+<h2 class="anchored" data-anchor-id="example-scheduling-multiple-machines">Example scheduling multiple machines</h2>
+<p>We consider two machines which should perform the following jobs:</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>machines <span class="op">=</span> [<span class="st">'1'</span>,<span class="st">'2'</span>]</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>jobs <span class="op">=</span> {</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'A'</span>: {<span class="st">'release'</span>:<span class="dv">2</span>, <span class="st">'duration'</span>: <span class="dv">5</span>, <span class="st">'due'</span>: <span class="dv">10</span>},</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'B'</span>: {<span class="st">'release'</span>:<span class="dv">5</span>, <span class="st">'duration'</span>: <span class="dv">6</span>, <span class="st">'due'</span>: <span class="dv">21</span>},</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'C'</span>: {<span class="st">'release'</span>:<span class="dv">4</span>, <span class="st">'duration'</span>: <span class="dv">8</span>, <span class="st">'due'</span>: <span class="dv">15</span>},</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'D'</span>: {<span class="st">'release'</span>:<span class="dv">0</span>, <span class="st">'duration'</span>: <span class="dv">4</span>, <span class="st">'due'</span>: <span class="dv">10</span>},</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'E'</span>: {<span class="st">'release'</span>:<span class="dv">0</span>, <span class="st">'duration'</span>: <span class="dv">2</span>, <span class="st">'due'</span>:  <span class="dv">5</span>},</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'F'</span>: {<span class="st">'release'</span>:<span class="dv">8</span>, <span class="st">'duration'</span>: <span class="dv">3</span>, <span class="st">'due'</span>: <span class="dv">15</span>},</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'G'</span>: {<span class="st">'release'</span>:<span class="dv">9</span>, <span class="st">'duration'</span>: <span class="dv">2</span>, <span class="st">'due'</span>: <span class="dv">22</span>}</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> model_multiple_machines(jobs, machines, optimize <span class="op">=</span> <span class="st">'makespan'</span>):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">#instanciate model</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel(<span class="st">"multiple jobs, multiple workers"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># index sets</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    m.jobs <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> jobs.keys())</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    m.machines <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> machines)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    m.order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.jobs <span class="op">*</span> m.jobs, dimen <span class="op">=</span> <span class="dv">2</span>, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j: i<span class="op">&lt;</span>j)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># parameters</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job due time"</span>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> due(m,i):</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'due'</span>]</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job duration time"</span>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> duration(m,i):</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'duration'</span>]</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job release time"</span>)</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> release(m,i):</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jobs[i][<span class="st">'release'</span>]</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># doc = "big M integer in modeling disjunctions" and apply hull transform</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    BigM <span class="op">=</span> <span class="bu">max</span>([m.release[j] <span class="cf">for</span> j <span class="kw">in</span> m.jobs]) <span class="op">+</span> <span class="bu">sum</span>([m.duration[j] <span class="cf">for</span> j <span class="kw">in</span> m.jobs])</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># variables</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">## decision / timeline variables</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    m.start <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>                      bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">1000</span>) ,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>                      doc <span class="op">=</span> <span class="st">"start time of job"</span>)</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>    m.pastdue <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals,</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>                        bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">1000</span>),</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>                        doc <span class="op">=</span> <span class="st">"time job is past due"</span>)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    m.early <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.NonNegativeReals,</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>                      bounds <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">10000</span>),</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>                      doc <span class="op">=</span> <span class="st">"time job is finished early"</span>)</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">## objective variables</span></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    m.makespan <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, doc <span class="op">=</span> <span class="st">"time to complete all jobs"</span>)</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>    m.ispastdue <span class="op">=</span> pyo.Var(m.jobs, domain <span class="op">=</span> pyo.Binary, doc <span class="op">=</span> <span class="st">"binary iff job is overdue"</span>)</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    m.maxpastdue <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, doc <span class="op">=</span> <span class="st">""</span>)</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">## additional variales</span></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>    m.job_to_machine <span class="op">=</span> pyo.Var(m.jobs, m.machines, domain <span class="op">=</span> pyo.Binary, doc <span class="op">=</span> <span class="st">"binary assignment job to machine"</span>)</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> optimize <span class="op">==</span> <span class="st">'makespan'</span>:</span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.makespan, sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> optimize <span class="op">==</span> <span class="st">'sum_pastdue'</span>:</span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> <span class="bu">sum</span>([m.pastdue[i] <span class="cf">for</span> i <span class="kw">in</span> m.jobs]), sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'wrong value for parameter optimize. allowed are "makespan" or "sum_pastdue" optimize = makespan used instead.'</span>)</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a>        m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.makespan, sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraint / disjunctions</span></span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job start after release"</span>)</span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c1(m,i):</span>
+<span id="cb25-55"><a href="#cb25-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.start[i] <span class="op">&gt;=</span> m.release[i]</span>
+<span id="cb25-56"><a href="#cb25-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"time variable relation"</span>)</span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c2(m,i):</span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.start[i] <span class="op">+</span> m.duration[i] <span class="op">+</span> m.early[i] <span class="op">==</span> m.due[i] <span class="op">+</span> m.pastdue[i]</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.jobs, doc <span class="op">=</span> <span class="st">"job either early or pastdue"</span>)</span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> d1(m,i):</span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [m.early[i]<span class="op">==</span><span class="dv">0</span>, m.pastdue[i]<span class="op">==</span><span class="dv">0</span>]</span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-65"><a href="#cb25-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.jobs, doc <span class="op">=</span> <span class="st">""</span>)</span>
+<span id="cb25-66"><a href="#cb25-66" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> d2(m,j):</span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [m.pastdue[j] <span class="op">==</span> <span class="dv">0</span>, m.ispastdue[j] <span class="op">==</span> <span class="dv">1</span>],</span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"each job is assigned to one and only one machine"</span>)</span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c3(m,j):</span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> (<span class="bu">sum</span>(m.job_to_machine[j,machine] <span class="cf">for</span> machine <span class="kw">in</span> m.machines) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"define objective variable maxpastdue"</span>)</span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span>  c4(m,j):</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.pastdue[j] <span class="op">&lt;=</span> m.maxpastdue</span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.jobs, doc <span class="op">=</span> <span class="st">"define objective variable makespan"</span>)</span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c6(m,i):</span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.start[i] <span class="op">+</span> m.duration[i] <span class="op">&lt;=</span> m.makespan</span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.machines, m.order, doc <span class="op">=</span> <span class="st">"ordering of jobs"</span>)</span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> d3(m, machine, i,j):</span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [m.start[i] <span class="op">+</span> m.duration[i] <span class="op">&lt;=</span> m.start[j] <span class="op">+</span> BigM <span class="op">*</span> ((<span class="dv">1</span> <span class="op">-</span> m.job_to_machine[i,machine]) <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> m.job_to_machine[j,machine])),</span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a>                m.start[j] <span class="op">+</span> m.duration[j] <span class="op">&lt;=</span> m.start[i] <span class="op">+</span> BigM <span class="op">*</span> ((<span class="dv">1</span> <span class="op">-</span> m.job_to_machine[i,machine]) <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> m.job_to_machine[j,machine]))</span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>               ]</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a>    transform <span class="op">=</span> pyo.TransformationFactory(<span class="st">'gdp.hull'</span>)</span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>    transform.apply_to(m)</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a>    <span class="co"># solve model</span></span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>    pyo.SolverFactory(<span class="st">'glpk'</span>).solve(m)</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="optimal-makespan---multiple-machines" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-makespan---multiple-machines">Optimal <code>makespan</code> - multiple machines</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_multiple_machines(jobs, machines, optimize <span class="op">=</span> <span class="st">'makespan'</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule_from_model(model, machines)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 15.0,
+ 'Max Pastdue': 0,
+ 'Sum of Pastdue': 0,
+ 'Number Pastdue': 0,
+ 'Number on Time': 7,
+ 'Fraction on Time': 1.0}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-19-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-19-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="optimal-sum-past-due---multiple-machines" class="level1">
+<h1>Optimal <code>sum past due</code> - multiple machines</h1>
+<p>By definition <code>sum_pastdue</code> is sum of the times the jobs are past due.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model_multiple_machines(jobs, machines, optimize <span class="op">=</span> <span class="st">'sum_pastdue'</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>SCHEDULE <span class="op">=</span> schedule_from_model(model, machines)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>gantt(jobs, SCHEDULE)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>kpi(jobs, SCHEDULE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'Makespan': 21.0,
+ 'Max Pastdue': 0,
+ 'Sum of Pastdue': 0,
+ 'Number Pastdue': 0,
+ 'Number on Time': 7,
+ 'Fraction on Time': 1.0}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-20-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="00_bottleneck_machine_files/figure-html/cell-20-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="discussion-one-machines" class="level1">
+<h1>Discussion one machines</h1>
+<p>We see that for the choosen empirical schedules maximal 3 jobs are done on time, whereas for the optimal solutions either 4 jobs (optimize <code>makespan</code>) or 5 jobs (optimize <code>sum_pastdue</code>) are done on time.</p>
+</section>
+<section id="discussion-multiple-machines" class="level1">
+<h1>Discussion multiple machines</h1>
+<p>Having a second machine let us find schedules in which all jobs are done on time.</p>
+<p>But we see that the optimal solutions are different - with respect to the sum of <code>pastdue</code> leads to a solution in which one machine has breaks - whereas for <code>makespan</code> both machines are constantly working on jobs.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-gueret1999applications" class="csl-entry" role="doc-biblioentry">
+Guéret, Christelle, Christian Prins, and Marc Sevaux. 1999. <span>“Applications of Optimization with Xpress-MP.”</span> <em>Contract</em>, 00034.
+</div>
+<div id="ref-PostekZocca2022" class="csl-entry" role="doc-biblioentry">
+Postek, Krzysztof, Alessandro Zocca, Joaquim Gromicho, and Jeffrey Kantor. 2022. <em>Data-Driven Mathematical Optimization in Python</em>. Online. <a href="https://jckantor.github.io/MO-book/">https://jckantor.github.io/MO-book/</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
