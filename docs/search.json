@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "SP",
     "section": "",
-    "text": "modeling\n\n\n\n\nTricks to transform a optimization model into a linear program\n\n\n\n\n\n\nNov 30, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquarto\n\n\n\n\nQuick introduction to use citation and footnotes in quarto\n\n\n\n\n\n\nNov 29, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ngithub\n\n\n\n\nusing github actions\n\n\n\n\n\n\nSep 28, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nscheduling\n\n\n\n\nSchedule jobs on a bottleneck machine and multiple machines\n\n\n\n\n\n\nJun 21, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA simple example of a blending model. Given different ingredients we want to find a recipe for one product that fulfills certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA blending model with multiple products which fulfill certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
+    "text": "modeling\n\n\npyomo\n\n\n\n\nCalculating shadow prices, reduced\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 4, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSolver\n\n\n\n\nSCIP is of the fastest non-commercial solvers for MILP and MINLP. In this blog we give a quickstart to SCIP’s python interface pyscipopt.\n\n\n\n\n\n\nMar 3, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\n\n\nTricks to transform a optimization model into a linear program\n\n\n\n\n\n\nNov 30, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquarto\n\n\n\n\nQuick introduction to use citation and footnotes in quarto\n\n\n\n\n\n\nNov 29, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ngithub\n\n\n\n\nusing github actions\n\n\n\n\n\n\nSep 28, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nscheduling\n\n\n\n\nSchedule jobs on a bottleneck machine and multiple machines\n\n\n\n\n\n\nJun 21, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA simple example of a blending model. Given different ingredients we want to find a recipe for one product that fulfills certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA blending model with multiple products which fulfill certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "nbs/20221129_citation/index.html",
@@ -54,6 +54,69 @@
     "title": "github actions",
     "section": "",
     "text": "This post explains how to set up a CI/CD with GitHub Actions. It expands predefined nbdev workflows, such that non python packages can be used.\n\n\nGitHub Actions allows us to automate our build, test, and deployment pipeline by continuous integration and continuous delivery (CI/CD).\nWe can create workflows to build and test every pull request to our repository. Whenever an event occurs a workflow is triggered. A workflow contains one or more jobs. In other words: We specify in a workflow what (jobs) should be done when (event).\nA workflow is stored as a YAML file in the .github/workflows directory.\nIn our case we had to modify a predefined workflow from nbdev, because we have to install some non python packages which require root write permissions.\nPrecisely; we want to use the glpk solver in a nbdev project and therefore define a workflow in the following example.\n\n\n\nWe first give the content of the yaml-file and explain its parts afterwards.\nname: stochprog_test\non: [push]\n\npermissions: write-all\n\njobs:\n  build:\n\n    runs-on: ubuntu-20.04\n\n    steps:\n      - uses: actions/checkout@v3\n      - name: Set up Python 3.9\n        uses: actions/setup-python@v4\n        with:\n          python-version: '3.9'\n      - name: install solver\n        run : sudo apt-get install -y libopenmpi-dev glpk-utils\n      - name: poetry install\n        run: |\n          python -m pip install --upgrade pip\n          curl -sSL https://install.python-poetry.org | python3 -\n          poetry install\n      - uses: fastai/workflows/quarto-ghp@master\n      - uses: fastai/workflows/nbdev-ci@master\n\n\nFirst we specify the name of the workflow. The given name will be displayed in the action tab of your github repository.\n\n\n\nThen we specify the events which will trigger the workflow. - for single event use on: push - for multiple events use on: [push, fork] - list of events that trigger workflows - there are many other activity types to trigger a workflow, e.g. issue creation\n\n\n\nWe can modify the permissions granted to the GITHUB_-_TOKEN. For simplicyty we did this for all scopes, but the permissions can be granted to to different scopes and specific jobs.\n\n\n\nA workflow is made of one or more jobs which specify what has to be done. Here build is the name of the job, which is defined afterwards. In the build job we define\n\nruns-on: ubuntu-20.04 specifies the type of machine the job runs on\nsteps list the tasks of the job\n\nEach step runs in its own process in the runner environment and has access to the workspace and filesystem. Because steps run in their own process, changes to environment variables are not preserved between steps\nuses: uses: fastai/workflows/quarto-ghp@master runs an action of the fastai public repository\n\nAs the virtual Linux machines run passwordless we can use sudo without providing a password but add option -y to confirm the installation. Put together: run : sudo apt-get install -y libopenmpi-dev glpk-utils\n\n\n\n\n\n\nchaching dependencies to improve performance"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "",
+    "text": "In this post we explain certain tools to investigate how an optimal solution changes when the input data changes. First we will introduce the notions and study how to do it in pyomo with the help of a small example.\nOne usage of these tool could be: Suppose we have factories with certain capacities producing certain products. We used a linear program to derive an optimal solution how to use our resources best. In this optimal setting some factories will running at their capacity limit. Now suppose we want to produce/sell more, hence we have to increase the capacities. Hence a natural question is which capacities should be increased first. Of course we could do simmulations using our linear program, but with the help of what we will see soon these information are allready available with our optimal solution.\n\n\n\npyomo suffixes\nsensitivity analysis\naccessing duals\nreduced costs\nshadow prices\nslack values"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#sets",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#sets",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "sets",
+    "text": "sets\n\n\\(type\\) - chip type\n\\(process\\) - production process"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#variables",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#variables",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "variables",
+    "text": "variables\n\n\\(x_i\\) produced amount of chip type \\(i \\in type\\)"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#parameters",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#parameters",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "parameters",
+    "text": "parameters\n\n\\(profit_i\\) - profit of 1 kg of type \\(i\\) chip in $\n\\(avail_j\\) - available time for production process \\(j\\)\n\\(time_{ij}\\) - required time in min for 1 kg of type \\(i\\) chip and production process \\(j\\)"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#constraints",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#constraints",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "constraints",
+    "text": "constraints\n\n(c1) time restriction on slicing\n(c2) time restriction on frying\n(c3) time restriction on packing\nproduction quantities are not negative"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#objective",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#objective",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "objective",
+    "text": "objective\nMaximize net profit"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#model",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#model",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "model",
+    "text": "model\n\\[\n\\begin{array}{lll}\n\\max & \\sum_{i\\in type} profit_i \\cdot x_i & \\\\\ns.t. & \\sum_{i\\in type} time_{ij} \\cdot x_i \\leq avail_j & \\forall j\\in process \\\\\n     & x_{i} \\leq 0 &\n\\end{array}\n\\]\n\nimport pyomo.environ as pyo\nimport json\n\n\ndata = {\n    \"Name\": \"Chip Shop\",\n    \"constraints\": {\n        'slicing': {'plain': 2, 'mexican': 4, 'availibility': 345},\n        'frying': {'plain': 4, 'mexican': 5, 'availibility': 480},\n        'packing': {'plain': 4, 'mexican': 2, 'availibility': 330},\n    },\n    \"profit\": {'plain': 2., 'mexican': 1.5},\n    \"Engine\": \"cbc\",\n    \"TimeLimit\": \"\"\n\n}"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#interlude-accessing-duals-in-pyomo",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#interlude-accessing-duals-in-pyomo",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "Interlude accessing duals in Pyomo",
+    "text": "Interlude accessing duals in Pyomo\nIn order to extract the desired information we are using suffixes in pyomo. Suffixes provide a mechanism for declaring extraneous model data, which can be used in a number of contexts. The following code snippet shows how to declare a suffix component:\nm.dual = pyo.Suffix(direction=pyo.Suffix.IMPORT)"
+  },
+  {
+    "objectID": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#chips-model",
+    "href": "nbs/SensitivityAnalysis/01_sensitivity_analysis.html#chips-model",
+    "title": "Sensitivity Analysis in Pyomo",
+    "section": "chips model",
+    "text": "chips model\n\ndef chip_shop(data):    \n    m = pyo.ConcreteModel(data['Name'])\n    \n    #sets\n    m.types = pyo.Set(initialize = list(data['profit'].keys()))\n    m.process = pyo.Set(initialize = list(data['constraints'].keys()))\n    \n    # decision variables\n    m.x = pyo.Var(m.types, domain = pyo.NonNegativeReals, doc = 'produced packages of chip type i')\n    \n    \n    \n    # parameter\n    @m.Param(m.types, m.process, doc = 'processing time of product i in process j')\n    def time(m,i,j):\n        return data['constraints'][j][i]\n    @m.Param(m.process, doc = 'available processing time for process j')\n    def avail(m,j):\n        return data['constraints'][j]['availibility']\n    @m.Param(m.types, doc = 'net profits for product i')\n    def profit(m,i):\n        return data['profit'][i]\n    \n    # objective\n    m.OBJ = pyo.Objective(expr = pyo.quicksum(m.profit[i] * m.x[i] for i in m.types),\n                         sense = pyo.maximize)\n    \n    # constraints\n    @m.Constraint(m.process)\n    def c(m,j):\n        return pyo.quicksum(m.time[i,j] * m.x[i] for i in m.types) <= m.avail[j]\n    \n    # declaring a Suffix component - to access duals, slack, etc.\n    m.dual = pyo.Suffix(direction=pyo.Suffix.IMPORT)\n    \n    #extra components for output\n    m.optimaltime = pyo.Var(m.process, domain = pyo.NonNegativeReals)\n    @m.Constraint(m.process)\n    def opttime(m,j):\n        return m.optimaltime[j] == pyo.quicksum(m.time[i,j] * m.x[i] for i in m.types)\n    \n    # choosing and applying a solver\n    solver = pyo.SolverFactory('cbc')\n    solver.solve(m)\n    \n    return m\n\n\nm = chip_shop(data)\nprint('objective value: %s' % pyo.value(m.OBJ))\nfor i in m.types:\n    print('%10s optimal production: %3s' % (i, pyo.value(m.x[i])))\n\nobjective value: 190.0\n     plain optimal production: 57.5\n   mexican optimal production: 50.0"
   },
   {
     "objectID": "nbs/20221130_modeling_tips/index.html",
@@ -292,6 +355,104 @@
     "title": "Pyomo and solver test",
     "section": "",
     "text": "We give the implementation of a simple model in pyomo to test the correct installation and in particular the solvers.\nExpectation: code is executed without errors\n\n\nconda env create -f environment.yml\nconda activate blog\n\nimport pyomo.environ as pyo\n\n\nmodel = pyo.ConcreteModel()\n\nmodel.x = pyo.Var([1,2], domain=pyo.NonNegativeReals)\n\nmodel.OBJ = pyo.Objective(expr = 2*model.x[1] + 3*model.x[2])\n\nmodel.Constraint1 = pyo.Constraint(expr = 3*model.x[1] + 4*model.x[2] >= 1)\n\n\nglpk_test = pyo.SolverFactory('glpk')\ncbc_test = pyo.SolverFactory('cbc')\nipopt_test = pyo.SolverFactory('ipopt')\n\n\nglpk_test.solve(model)\n\n{'Problem': [{'Name': 'unknown', 'Lower bound': 0.666666666666667, 'Upper bound': 0.666666666666667, 'Number of objectives': 1, 'Number of constraints': 2, 'Number of variables': 3, 'Number of nonzeros': 3, 'Sense': 'minimize'}], 'Solver': [{'Status': 'ok', 'Termination condition': 'optimal', 'Statistics': {'Branch and bound': {'Number of bounded subproblems': 0, 'Number of created subproblems': 0}}, 'Error rc': 0, 'Time': 0.013138532638549805}], 'Solution': [OrderedDict([('number of solutions', 0), ('number of solutions displayed', 0)])]}\n\n\n\nmodel.pprint()\n\n1 Set Declarations\n    x_index : Size=1, Index=None, Ordered=Insertion\n        Key  : Dimen : Domain : Size : Members\n        None :     1 :    Any :    2 : {1, 2}\n\n1 Var Declarations\n    x : Size=2, Index=x_index\n        Key : Lower : Value             : Upper : Fixed : Stale : Domain\n          1 :     0 : 0.333333333333333 :  None : False : False : NonNegativeReals\n          2 :     0 :               0.0 :  None : False : False : NonNegativeReals\n\n1 Objective Declarations\n    OBJ : Size=1, Index=None, Active=True\n        Key  : Active : Sense    : Expression\n        None :   True : minimize : 2*x[1] + 3*x[2]\n\n1 Constraint Declarations\n    Constraint1 : Size=1, Index=None, Active=True\n        Key  : Lower : Body            : Upper : Active\n        None :   1.0 : 3*x[1] + 4*x[2] :  +Inf :   True\n\n4 Declarations: x_index x OBJ Constraint1\n\n\n\ncbc_test.solve(model)\n\n{'Problem': [{'Name': 'unknown', 'Lower bound': 0.6666666667, 'Upper bound': 0.6666666667, 'Number of objectives': 1, 'Number of constraints': 2, 'Number of variables': 3, 'Number of nonzeros': 0, 'Sense': 'minimize'}], 'Solver': [{'Status': 'ok', 'User time': -1.0, 'System time': 0.0, 'Wallclock time': 0.0, 'Termination condition': 'optimal', 'Termination message': 'Model was solved to optimality (subject to tolerances), and an optimal solution is available.', 'Statistics': {'Branch and bound': {'Number of bounded subproblems': None, 'Number of created subproblems': None}, 'Black box': {'Number of iterations': 0}}, 'Error rc': 0, 'Time': 0.04025125503540039}], 'Solution': [OrderedDict([('number of solutions', 0), ('number of solutions displayed', 0)])]}\n\n\n\nmodel.pprint()\n\n1 Set Declarations\n    x_index : Size=1, Index=None, Ordered=Insertion\n        Key  : Dimen : Domain : Size : Members\n        None :     1 :    Any :    2 : {1, 2}\n\n1 Var Declarations\n    x : Size=2, Index=x_index\n        Key : Lower : Value      : Upper : Fixed : Stale : Domain\n          1 :     0 : 0.33333333 :  None : False : False : NonNegativeReals\n          2 :     0 :        0.0 :  None : False : False : NonNegativeReals\n\n1 Objective Declarations\n    OBJ : Size=1, Index=None, Active=True\n        Key  : Active : Sense    : Expression\n        None :   True : minimize : 2*x[1] + 3*x[2]\n\n1 Constraint Declarations\n    Constraint1 : Size=1, Index=None, Active=True\n        Key  : Lower : Body            : Upper : Active\n        None :   1.0 : 3*x[1] + 4*x[2] :  +Inf :   True\n\n4 Declarations: x_index x OBJ Constraint1\n\n\n\nipopt_test.solve(model)\n\n{'Problem': [{'Lower bound': -inf, 'Upper bound': inf, 'Number of objectives': 1, 'Number of constraints': 1, 'Number of variables': 2, 'Sense': 'unknown'}], 'Solver': [{'Status': 'ok', 'Message': 'Ipopt 3.14.11\\\\x3a Optimal Solution Found', 'Termination condition': 'optimal', 'Id': 0, 'Error rc': 0, 'Time': 0.05022311210632324}], 'Solution': [OrderedDict([('number of solutions', 0), ('number of solutions displayed', 0)])]}\n\n\n\nmodel.pprint()\n\n1 Set Declarations\n    x_index : Size=1, Index=None, Ordered=Insertion\n        Key  : Dimen : Domain : Size : Members\n        None :     1 :    Any :    2 : {1, 2}\n\n1 Var Declarations\n    x : Size=2, Index=x_index\n        Key : Lower : Value                   : Upper : Fixed : Stale : Domain\n          1 :     0 :      0.3333333343972087 :  None : False : False : NonNegativeReals\n          2 :     0 : -2.3599945501636825e-09 :  None : False : False : NonNegativeReals\n\n1 Objective Declarations\n    OBJ : Size=1, Index=None, Active=True\n        Key  : Active : Sense    : Expression\n        None :   True : minimize : 2*x[1] + 3*x[2]\n\n1 Constraint Declarations\n    Constraint1 : Size=1, Index=None, Active=True\n        Key  : Lower : Body            : Upper : Active\n        None :   1.0 : 3*x[1] + 4*x[2] :  +Inf :   True\n\n4 Declarations: x_index x OBJ Constraint1"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "",
+    "text": "We generalize our transport problem to the case that we are producing multiple commodities in our factories. Again each factory has its own production capacity and the markets have their own demand for each commodity. Moreover the transport costs depends on the commodity.\n\n\n\njson file as data input"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#sets",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#sets",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "sets",
+    "text": "sets\n\n\\(I\\) customer\n\\(J\\) factory\n\\(K\\) commodity"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#variables",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#variables",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "variables",
+    "text": "variables\n\n\\(x_{i,j,k}\\) transported amount of commodity \\(k\\) form factory \\(j\\) to customer \\(i\\)"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#parameters",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#parameters",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "parameters",
+    "text": "parameters\n\n\\(c_{i,j,k}\\) transport costs of commodity \\(k\\) form factory \\(j\\) to customer \\(i\\)\n\\(d_{i,k}\\) demand of commodity \\(k\\) in market \\(i\\)\n\\(M_j\\) capacity of factory \\(j\\)"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#constraints",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#constraints",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "constraints",
+    "text": "constraints\n\n(c1) fulfill demand in each market\n(c2) do not exceed factory capacity"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#objective",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#objective",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "objective",
+    "text": "objective\nMinimize total costs"
+  },
+  {
+    "objectID": "nbs/20230308_scip/03_multicommodity_transportProblem.html#model",
+    "href": "nbs/20230308_scip/03_multicommodity_transportProblem.html#model",
+    "title": "Multi Commodoity transport problems with SCIP",
+    "section": "model",
+    "text": "model\n\\[\n\\begin{array}{lll}\n\\min & \\sum_{i,j,l} c_{i,j,k} x_{i,j,k} & \\\\\ns.t. & \\sum_j x_{i,j,k} = d_{i,k} & \\forall i,k \\\\\n     & \\sum_{i,k} x_{i,j,k} \\leq M_j & \\forall j \\\\\n     & x_{i,j,k} \\leq 0 &\n\\end{array}\n\\]\n\nimport pyscipopt as scip\nimport json\n\n\ndata = {\n    \"Name\": \"multi-commodity transportation\",\n    \n    \"Engine\": \"\",\n    \"TimeLimit\": \"\"\n\n}\n\n\n# data\nJ,M = scip.multidict({1:3000, 2:3000, 3:3000})\nproduce = {1:[2,4], 2:[1,2,3], 3:[2,3,4]}\n\nd = {(1,1):80,   (1,2):85,   (1,3):300,  (1,4):6,\n     (2,1):270,  (2,2):160,  (2,3):400,  (2,4):7,\n     (3,1):250,  (3,2):130,  (3,3):350,  (3,4):4,\n     (4,1):160,  (4,2):60,   (4,3):200,  (4,4):3,\n     (5,1):180,  (5,2):40,   (5,3):150,  (5,4):5\n     }\nI = set([i for (i,k) in d])\nK = set([k for (i,k) in d])\n\nweight = {1:5, 2:2, 3:3, 4:4}\ncost = {(1,1):4,  (1,2):6, (1,3):9,\n        (2,1):5,  (2,2):4, (2,3):7,\n        (3,1):6,  (3,2):3, (3,3):4,\n        (4,1):8,  (4,2):5, (4,3):3,\n        (5,1):10, (5,2):8, (5,3):4\n        }\nc = {}\nfor i in I:\n    for j in J:\n        for k in produce[j]:\n            c[i, j, k] = cost[i,j] * weight[k]\n\n\ndef MultiCommoditityTransportation(I,J,K, c,d,M):\n    \n    model = scip.Model()\n    # vars\n    x = {}\n    for i in I:\n        for j in J:\n            for k in K:\n                x[i,j,k] = model.addVar(vtype = 'C',\n                                       name = 'x(%s,%s,%s)' %  (i,j,k))\n                \n    # constraints\n    for j in J:\n        model.addCons(scip.quicksum(x[i,j,k] for (i,j_,k) in x if j_ == j) <= M[j],\n                      name = 'FactoryCapacity(%s)' % j)\n        \n    for i in I:\n        for k in K:\n            model.addCons(scip.quicksum(x[i,j,k] for j in J if (i,j,k) in x) == d[i,k]\n            )\n\n    # objective\n    model.setObjective(scip.quicksum(c[i,j,k] * x[i,j,k]  for (i,j,k) in c),\n                      sense = 'minimize')\n    \n    # for post processing\n    model.data = x\n    \n    return model\n\n\nm = MultiCommoditityTransportation(I,J,K, c,d,M)\nm.optimize()\n\n\nprint('optimal value:', m.getObjVal())\nepsilon =1.e-6\nx = m.data\nfor (i,j,k) in x:\n    if m.getVal(x[i,j,k]) >= epsilon:\n        print('send %10s of commodity %3s from factory %3s to customer %3s' % (m.getVal(x[i,j,k]), k, j, i))\n\noptimal value: 3420.0\nsend       85.0 of commodity   2 from factory   1 to customer   1\nsend      300.0 of commodity   3 from factory   1 to customer   1\nsend        6.0 of commodity   4 from factory   2 to customer   1\nsend       80.0 of commodity   1 from factory   3 to customer   1\nsend      400.0 of commodity   3 from factory   1 to customer   2\nsend      160.0 of commodity   2 from factory   2 to customer   2\nsend        7.0 of commodity   4 from factory   2 to customer   2\nsend      270.0 of commodity   1 from factory   3 to customer   2\nsend      350.0 of commodity   3 from factory   1 to customer   3\nsend      130.0 of commodity   2 from factory   2 to customer   3\nsend        4.0 of commodity   4 from factory   2 to customer   3\nsend      250.0 of commodity   1 from factory   3 to customer   3\nsend      200.0 of commodity   3 from factory   1 to customer   4\nsend        3.0 of commodity   4 from factory   2 to customer   4\nsend      160.0 of commodity   1 from factory   3 to customer   4\nsend       60.0 of commodity   2 from factory   3 to customer   4\nsend      150.0 of commodity   3 from factory   1 to customer   5\nsend        5.0 of commodity   4 from factory   2 to customer   5\nsend      180.0 of commodity   1 from factory   3 to customer   5\nsend       40.0 of commodity   2 from factory   3 to customer   5"
+  },
+  {
+    "objectID": "nbs/20230308_scip/01_SCIP_install.html",
+    "href": "nbs/20230308_scip/01_SCIP_install.html",
+    "title": "SCIP - fast non-commercial solver got open source licence",
+    "section": "",
+    "text": "summary\nWe saw the basic components of pyscipopt in order to create an optimization model. In the following notebooks we will look at some classical problems and how to solve them using SCIP.\n\n\n\n\n\n\nReferences\n\nJoão Pedro Pedroso, Mikio Kubo, Abdur Rais, and Masakazu Muramatsu. 2019. Mathematical Optimization: Solving Problems Using SCIP and Python. Online. http://scipbook.readthedocs.io/.\n\nFootnotes\n\n\nhttps://www.scipopt.org/doc-8.0.3/html/↩︎"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html",
+    "title": "Transport problems with SCIP",
+    "section": "",
+    "text": "Suppose you can produce goods in different factories and sell them on different markets. Each factory has its own production capacity and each market has its own demand, which we may know after elaborating a survey. As the distances of the markets and the factories are different, we are looking for a transport route which minimizes the total costs.\nThe problem can be visualized as follows\n\n\n\nTransportProblem\n\n\nReference: (João Pedro Pedroso and Muramatsu 2019, introduction:Transport problem)\n\n\nAgain we assume that the reader is familiar with basic concepts of optimization, but we are writting the blog in a way that the unexperienced readers see the benefit of these techniques, while considering them as blakc boxes.\n\nSCIP multidic\nget slack variable values, sensitivity analysis, shadow prices, … (all synonyms)"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html#sets",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html#sets",
+    "title": "Transport problems with SCIP",
+    "section": "Sets",
+    "text": "Sets\n\n\\(I\\) customer set\n\\(J\\) factory set"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html#variables",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html#variables",
+    "title": "Transport problems with SCIP",
+    "section": "Variables",
+    "text": "Variables\n\n\\(x_{i,j}\\) amount of goods transported from factory \\(j\\) to customer \\(i\\)"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html#parameter",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html#parameter",
+    "title": "Transport problems with SCIP",
+    "section": "Parameter",
+    "text": "Parameter\n\n\\(c_{i,j}\\) transportation costs from factory \\(i\\) to customer \\(j\\)\n\\(d_i\\) demand of customer \\(i\\)\n\\(m_j\\) production capacity of factory \\(j\\)"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html#lp-model",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html#lp-model",
+    "title": "Transport problems with SCIP",
+    "section": "LP-Model",
+    "text": "LP-Model\n\\[\n\\begin{array}{llll}\n\\min & \\sum_{i,j} c_{i,j} x_{i,j} & & \\\\\ns.t. & \\sum_j x_{i,j}             & = d_i & \\forall i\\\\\n     & \\sum_i x_{i,j}             & \\leq m_j & \\forall j\\\\\n     & x_{i,j}                    & \\geq 0 & \\forall i,j\n\\end{array}\n\\]\n\nimport pyscipopt as scip\n\n\n# demand\nI, d = scip.multidict({1:80, 2:270, 3:250, 4:160, 5:180})\n# capacities\nJ, M = scip.multidict({1:500, 2:500, 3:500})\n\n\n# transport costs\nc = {(1,1):4,    (1,2):6,    (1,3):9,\n     (2,1):5,    (2,2):4,    (2,3):7,\n     (3,1):6,    (3,2):3,    (3,3):3,\n     (4,1):8,    (4,2):5,    (4,3):3,\n     (5,1):10,   (5,2):8,    (5,3):4,\n     }\n\n\nm = scip.Model()   \n\n# variables\nx = {}\nfor i in I:\n    for j in J:\n        x[i,j] = m.addVar(vtype = 'C', name = 'x(%s,%s)' % (i,j))\n    \n# constraints\nfor i in I:\n    m.addCons(scip.quicksum( x[i,j] for j in J if (i,j) in x) == d[i],\n              name = 'CustomerDemand(%s)' % i)\nfor j in J:\n    m.addCons(scip.quicksum( x[i,j] for i in I if (i,j) in x) <= M[j],\n              name = 'FactoryCapacity(%s)' % j)\n    \n# objective\nm.setObjective(scip.quicksum(c[i,j]*x[i,j] for (i,j) in x),\n               sense = 'minimize')   \n\nm.optimize()    \n\n\nprint(\"optimal value:\", m.getObjVal())\nepsilon = 1.e-6\nfor (i,j) in x:\n    if m.getVal(x[i,j]) > epsilon:\n        print('send %10s goods from factory %2s to customer %2s' % (m.getVal(x[i,j]), j, i))\n\noptimal value: 3350.0\nsend       80.0 goods from factory  1 to customer  1\nsend      270.0 goods from factory  2 to customer  2\nsend      230.0 goods from factory  2 to customer  3\nsend       20.0 goods from factory  3 to customer  3\nsend      160.0 goods from factory  3 to customer  4\nsend      180.0 goods from factory  3 to customer  5"
+  },
+  {
+    "objectID": "nbs/20230308_scip/02_SCIP_transport_problem.html#example-continued",
+    "href": "nbs/20230308_scip/02_SCIP_transport_problem.html#example-continued",
+    "title": "Transport problems with SCIP",
+    "section": "Example continued",
+    "text": "Example continued\nSuppose you believe your factory capacity got tight and you are considering an expansion and you ask yourself the following questions:\n\nWhat kind of costs can be reduced by expanding each factory?\nWhat is the additional profit you can make if you get additional orders from each customer?\n\nIn order to investigate whether or not a factory should be expanded, we look at the values of the slack variables of the capacity constraints:\n\\[\n\\sum_i x_{i,j}\\leq M_j\n\\]\nWe recall that \\(x_{i,j}\\) denotes the amount of goods transported from factory \\(j\\) to market \\(i\\) and \\(M_j\\) denotes the capacity of factory \\(j\\)."
   },
   {
     "objectID": "about.html",
