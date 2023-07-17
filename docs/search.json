@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "SP",
     "section": "",
-    "text": "modeling\n\n\npyomo\n\n\n\n\nCalculating shadow prices, reduced\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 4, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSolver\n\n\n\n\nSCIP is of the fastest non-commercial solvers for MILP and MINLP. In this blog we give a quickstart to SCIP’s python interface pyscipopt.\n\n\n\n\n\n\nMar 3, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\n\n\nTricks to transform a optimization model into a linear program\n\n\n\n\n\n\nNov 30, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquarto\n\n\n\n\nQuick introduction to use citation and footnotes in quarto\n\n\n\n\n\n\nNov 29, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ngithub\n\n\n\n\nusing github actions\n\n\n\n\n\n\nSep 28, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nscheduling\n\n\n\n\nSchedule jobs on a bottleneck machine and multiple machines\n\n\n\n\n\n\nJun 21, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA simple example of a blending model. Given different ingredients we want to find a recipe for one product that fulfills certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA blending model with multiple products which fulfill certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
+    "text": "modeling\n\n\nmilp\n\n\npyomo\n\n\n\n\nthe knappsack problem appears in many real-world decision making processes.\n\n\n\n\n\n\nJul 10, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\npyomo\n\n\n\n\nCalculating shadow prices, reduced\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 12, 2023\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\nscip\n\n\n\n\nWe are solving a some transport problems using pyscipopt and show how do sensitivity analysis.\n\n\n\n\n\n\nMar 4, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSolver\n\n\n\n\nSCIP is of the fastest non-commercial solvers for MILP and MINLP. In this blog we give a quickstart to SCIP’s python interface pyscipopt.\n\n\n\n\n\n\nMar 3, 2023\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmodeling\n\n\n\n\nTricks to transform a optimization model into a linear program\n\n\n\n\n\n\nNov 30, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nquarto\n\n\n\n\nQuick introduction to use citation and footnotes in quarto\n\n\n\n\n\n\nNov 29, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest\n\n\n\n\njupyter notebook to test pyomo and solver installation\n\n\n\n\n\n\nNov 27, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ngithub\n\n\n\n\nusing github actions\n\n\n\n\n\n\nSep 28, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nscheduling\n\n\n\n\nSchedule jobs on a bottleneck machine and multiple machines\n\n\n\n\n\n\nJun 21, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nconstraint programming\n\n\nOR-Tools\n\n\n\n\ninstall OR-Tools, see basic example, basic operations like delete constraint, change variable bounds\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA simple example of a blending model. Given different ingredients we want to find a recipe for one product that fulfills certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\npyomo\n\n\nmodeling\n\n\nblending\n\n\nproduct mix\n\n\n\n\nA blending model with multiple products which fulfill certain requirements.\n\n\n\n\n\n\nJun 9, 2022\n\n\ncbarz\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "nbs/20221129_citation/index.html",
@@ -47,6 +47,48 @@
     "title": "Citation and Footnotes in quarto",
     "section": "5.2 Add a citation in a blog document",
     "text": "5.2 Add a citation in a blog document\n\nMarkdown format for citation is [@citation]\nGiven example: [@trotta2022pickup] renders to (Trotta et al. 2022)\nThere are other markdown format for citation, e.g. @trotta2022pickup renders to Trotta et al. (2022). For more information just have a look at the sources below."
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/01_intro_ORTools.html",
+    "href": "nbs/20230717_ORTools/01_intro_ORTools.html",
+    "title": "OR-Tools",
+    "section": "",
+    "text": "explain constraint programming\nexplain basic setup\nshow basic example from google\nCP-SAT solver\nCP-Solver"
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/01_intro_ORTools.html#install-or-tools",
+    "href": "nbs/20230717_ORTools/01_intro_ORTools.html#install-or-tools",
+    "title": "OR-Tools",
+    "section": "Install OR-Tools",
+    "text": "Install OR-Tools\nInstalling OR-Tools is straight forward using conda:\nconda install -c conda-forge ortools-python\nor simply pip\npython -m pip install --upgrade --user ortools\nfor more information see Google OR-Tools Overview"
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/01_intro_ORTools.html#example-count-enemy-soldiers",
+    "href": "nbs/20230717_ORTools/01_intro_ORTools.html#example-count-enemy-soldiers",
+    "title": "OR-Tools",
+    "section": "Example count enemy soldiers",
+    "text": "Example count enemy soldiers\nWe want to defeat the army of our opponent and therefore we have send out scouts to count the number of soldiers. Lets denote the number of soldiers by \\(n\\).\nBecause counting the soldiers one by one would be cumbersome, we asked our scouts to simply count the number of soldiers in the first row while they were marching through different landscapes.\nHence the scouts reported:\n\nscout 1: “At the bridge there were 13 soldiers in first row”\nscout 2: “At the crossing there were 19 soldiers in the first row”\nscout 3: “In the open field there were 37 soldiers in the first row”\n\nSo lets translate this into math: Scout 1 says that the number of soldiers is divisible by 13 and scout 2 (respk. scout 3) says that the number is divisible by 19 (respk. 37). And this can written as congruences\n\\[\n\\begin{array}{lll}\nn & \\equiv 0 & \\mod (13) \\\\\nn & \\equiv 0 & \\mod (19) \\\\\nn & \\equiv 0 & \\mod (37)\n\\end{array}\n\\]\nIn addition we somehow know that the number of soldiers of the opponents army can not exceed 10000 soldiers.\nremark: For simplicity of this example we assume that each row has the same number of soldiers. However if there would be less soldiers in the last row, then the left hand side of the above congruence would be excatly this number.\n\nbackground info\nThe example is well known since the 3 century and is a simple application of the chinese remainder theorem and requires only some simple math to solve it directly. But we like to point out that the use of congrunences in a LP for example is not that straight forward."
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/01_intro_ORTools.html#general-steps",
+    "href": "nbs/20230717_ORTools/01_intro_ORTools.html#general-steps",
+    "title": "OR-Tools",
+    "section": "general steps",
+    "text": "general steps\n\ninstantiate the model and the solver\ndeclare variables\ndeclare constraints\n(optional) define objective\napply solver\n\n\n\nCode\nfrom ortools.sat.python import cp_model\n\n\n\n\nCode\n# instantiate the model and the solver\nmodel = cp_model.CpModel()\nsolver = cp_model.CpSolver()\n\n\n\n\nCode\n# declare variable (together with bounds)\narmy = model.NewIntVar(1,100000, 'army')\n\n\n\n\nCode\n# declare constraints\nmodel.AddModuloEquality(0, army, 13)\nmodel.AddModuloEquality(0, army, 19)\nmodel.AddModuloEquality(0, army, 37)\n\n\n<ortools.sat.python.cp_model.Constraint>\n\n\n\n\nCode\n# apply solver\nstatus = solver.Solve(model)\n# print solver status\nprint('solver status:' + str(status == cp_model.OPTIMAL))\nprint('solution, soldiers in enemy army:' + str(solver.Value(army)))\n\n\nsolver status:True\nsolution, soldiers in enemy army:9139"
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/01_intro_ORTools.html#changing-bounds",
+    "href": "nbs/20230717_ORTools/01_intro_ORTools.html#changing-bounds",
+    "title": "OR-Tools",
+    "section": "changing bounds",
+    "text": "changing bounds\nPreviously we have assumed that the army can not have more than 10000 soldiers. Lets see what happends if we set this bound much higher.\nThe following snippet shows, how to change a variable bound\n\n\nCode\nnew_value = 100000\narmy.Proto().domain[:] = []\narmy.Proto().domain.extend(cp_model.Domain(1, new_value).FlattenedIntervals())\narmy.Proto()\n\n\nname: \"army\"\ndomain: 1\ndomain: 100000\n\n\nadd a solution printer\n\n\nCode\nclass VarArraySolutionPrinter(cp_model.CpSolverSolutionCallback):\n    \"\"\"Print intermediate solutions.\"\"\"\n\n    def __init__(self, variables):\n        cp_model.CpSolverSolutionCallback.__init__(self)\n        self.__variables = variables\n        self.__solution_count = 0\n\n    def on_solution_callback(self):\n        self.__solution_count += 1\n        for v in self.__variables:\n            print('%s=%i' % (v, self.Value(v)), end=' ')\n        print()\n\n    def solution_count(self):\n        return self.__solution_count\n\n\n\n\nCode\nsolver = cp_model.CpSolver()\nsolution_printer = VarArraySolutionPrinter(army)\n\n\n\n\nCode\nsolver.parameters.enumerate_all_solutions = True\n# Solve.\nstatus = solver.Solve(model)\n\n\n\n\nCode\nstatus = solver.Solve(model)\n\n\n\n\nCode\nprint('Status = %s' % solver.StatusName(status))\nprint('Number of solutions found: %i' % solution_printer.solution_count())\n\n\nStatus = OPTIMAL\nNumber of solutions found: 0"
+  },
+  {
+    "objectID": "nbs/20230717_ORTools/02_8queens.html",
+    "href": "nbs/20230717_ORTools/02_8queens.html",
+    "title": "blog",
+    "section": "",
+    "text": "import sys\nimport time\nfrom ortools.sat.python import cp_model\n\n\nmodel = cp_model.CpModel()\n\n\n# create variables\nboard_size = 4\nqueens = [\n    model.NewIntVar(0, board_size - 1, 'x%i' % i) for i in range(board_size)\n]\n\n\n# create constraints\n# All rows must be different.\nmodel.AddAllDifferent(queens)\n\n# No two queens can be on the same diagonal.\nmodel.AddAllDifferent(queens[i] + i for i in range(board_size))\nmodel.AddAllDifferent(queens[i] - i for i in range(board_size))\n\n<ortools.sat.python.cp_model.Constraint>\n\n\n\nclass NQueenSolutionPrinter(cp_model.CpSolverSolutionCallback):\n    \"\"\"Print intermediate solutions.\"\"\"\n\n    def __init__(self, queens):\n        cp_model.CpSolverSolutionCallback.__init__(self)\n        self.__queens = queens\n        self.__solution_count = 0\n        self.__start_time = time.time()\n\n    def solution_count(self):\n        return self.__solution_count\n\n    def on_solution_callback(self):\n        current_time = time.time()\n        print('Solution %i, time = %f s' %\n              (self.__solution_count, current_time - self.__start_time))\n        self.__solution_count += 1\n\n        all_queens = range(len(self.__queens))\n        for i in all_queens:\n            for j in all_queens:\n                if self.Value(self.__queens[j]) == i:\n                    # There is a queen in column j, row i.\n                    print('Q', end=' ')\n                else:\n                    print('_', end=' ')\n            print()\n        print()\n\n\nsolver = cp_model.CpSolver()\nsolution_printer = NQueenSolutionPrinter(queens)\nsolver.parameters.enumerate_all_solutions = True\nsolver.Solve(model, solution_printer)\n\nSolution 0, time = 0.008995 s\n_ Q _ _ \n_ _ _ Q \nQ _ _ _ \n_ _ Q _ \n\nSolution 1, time = 0.010817 s\n_ _ Q _ \nQ _ _ _ \n_ _ _ Q \n_ Q _ _ \n\n\n\n4"
   },
   {
     "objectID": "nbs/20220928_github_actions/index.html",
@@ -453,6 +495,41 @@
     "title": "Transport problems with SCIP",
     "section": "Example continued",
     "text": "Example continued\nSuppose you believe your factory capacity got tight and you are considering an expansion and you ask yourself the following questions:\n\nWhat kind of costs can be reduced by expanding each factory?\nWhat is the additional profit you can make if you get additional orders from each customer?\n\nIn order to investigate whether or not a factory should be expanded, we look at the values of the slack variables of the capacity constraints:\n\\[\n\\sum_i x_{i,j}\\leq M_j\n\\]\nWe recall that \\(x_{i,j}\\) denotes the amount of goods transported from factory \\(j\\) to market \\(i\\) and \\(M_j\\) denotes the capacity of factory \\(j\\)."
+  },
+  {
+    "objectID": "nbs/20230710_garden/01_knappsack.html",
+    "href": "nbs/20230710_garden/01_knappsack.html",
+    "title": "knappsack problem",
+    "section": "",
+    "text": "notebook will be part of a series\nlong term goal will be a bilevel programm to optimize bed planning in the private garden\ncurrent idea:\n\nupper level problem: “knappsack problem”\nlower level problem: “strip packing problem”"
+  },
+  {
+    "objectID": "nbs/20230710_garden/01_knappsack.html#outline",
+    "href": "nbs/20230710_garden/01_knappsack.html#outline",
+    "title": "knappsack problem",
+    "section": "outline",
+    "text": "outline\n\nintroduce knappsack problem\nmath description\npyomo implementation\nexample"
+  },
+  {
+    "objectID": "nbs/20230710_garden/01_knappsack.html#sets",
+    "href": "nbs/20230710_garden/01_knappsack.html#sets",
+    "title": "knappsack problem",
+    "section": "sets",
+    "text": "sets\n\n\\(I\\), set of items \\(i\\)"
+  },
+  {
+    "objectID": "nbs/20230710_garden/01_knappsack.html#decision-variables",
+    "href": "nbs/20230710_garden/01_knappsack.html#decision-variables",
+    "title": "knappsack problem",
+    "section": "(decision) variables",
+    "text": "(decision) variables\n\n\\(x_i\\), binary, 1 iff item \\(i\\) is put into knappsack"
+  },
+  {
+    "objectID": "nbs/20230710_garden/01_knappsack.html#parameter",
+    "href": "nbs/20230710_garden/01_knappsack.html#parameter",
+    "title": "knappsack problem",
+    "section": "parameter",
+    "text": "parameter\n\n\\(v_i\\) value of item \\(i\\)\n\\(w_i\\) weight of item \\(i\\)\n\\(W\\) capacity of knappsack\n\n\nimport pyomo.environ as pyo\nimport pandas as pd\nimport numpy as np\n\n\n# data\nitems = ['a','b','c','d']\nvalues = [8,3,6,11]\nweights= [5,7,4,3]\ncapacity_limit = 14\n\ndf = pd.DataFrame(\n    {'items' : items,\n     'values' : values,\n     'weights' : weights},\n    )\ndf['capacity'] = capacity_limit\n\ndisplay(df)\n\ndata = {\n    'model_name': 'bounded_knappsack',\n    'problem_data' : df,\n    'solver': 'cbc'\n}\n\n\n\n\n\n  \n    \n      \n      items\n      values\n      weights\n      capacity\n    \n  \n  \n    \n      0\n      a\n      8\n      5\n      14\n    \n    \n      1\n      b\n      3\n      7\n      14\n    \n    \n      2\n      c\n      6\n      4\n      14\n    \n    \n      3\n      d\n      11\n      3\n      14\n    \n  \n\n\n\n\n\n# model\n\ndef knappsack_01(data):\n    pdata = data['problem_data']\n    \n    m = pyo.ConcreteModel(data['model_name'])\n    \n    ## sets\n    m.Item = pyo.Set(initialize = list(pdata['items']), \n                     doc = 'list of items')\n    # var\n    m.x = pyo.Var(m.Item, domain = pyo.Binary, \n                  doc = '1 if item is part of knappsack')\n    ## param\n    @m.Param(m.Item, doc ='value of item i')\n    def value(m,i):\n        return pdata.loc[pdata['items'] == i,'values'].values[0]\n    \n    @m.Param(m.Item, doc ='weight of item i')\n    def weight(m,i):\n        return pdata.loc[pdata['items'] == i,'weights'].values[0]\n    \n    @m.Param(doc = 'capacity limit')\n    def cap_limit(m):\n        return list(pdata['capacity'].unique())[0]\n    \n    ## objective\n    m.OBJ = pyo.Objective(expr = sum(m.value[i] * m.x[i] for i in m.Item), sense = pyo.maximize)\n    \n    ## constraints\n    @m.Constraint(doc = 'knappsack capacity limit')\n    def c1(m):\n        return sum(m.weight[i] * m.x[i] for i in m.Item) <= m.cap_limit\n    \n    solver = pyo.SolverFactory(data['solver'])\n    solver.solve(m)\n    \n    return m\n\n\nm = knappsack_01(data)\n\n\ndef extract_solution(m):\n    solution = {r: [pyo.value(m.x[r])==1.0] for r in m.Item}\n    output = pd.DataFrame(data = solution)\n    output.index = ['object in knappsack']\n    return output\n\n\nextract_solution(m)\n\n\n\n\n\n  \n    \n      \n      a\n      b\n      c\n      d\n    \n  \n  \n    \n      object in knappsack\n      True\n      False\n      True\n      True"
   },
   {
     "objectID": "about.html",

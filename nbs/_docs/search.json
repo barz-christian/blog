@@ -1,0 +1,212 @@
+[
+  {
+    "objectID": "20230710_garden/01_knappsack.html",
+    "href": "20230710_garden/01_knappsack.html",
+    "title": "knappsack problem",
+    "section": "",
+    "text": "notebook will be part of a series\nlong term goal will be a bilevel programm to optimize bed planning in the private garden\ncurrent idea:\n\nupper level problem: “knappsack problem”\nlower level problem: “strip packing problem”"
+  },
+  {
+    "objectID": "20230710_garden/01_knappsack.html#outline",
+    "href": "20230710_garden/01_knappsack.html#outline",
+    "title": "knappsack problem",
+    "section": "outline",
+    "text": "outline\n\nintroduce knappsack problem\nmath description\npyomo implementation\nexample"
+  },
+  {
+    "objectID": "20230710_garden/01_knappsack.html#sets",
+    "href": "20230710_garden/01_knappsack.html#sets",
+    "title": "knappsack problem",
+    "section": "sets",
+    "text": "sets\n\n\\(I\\), set of items \\(i\\)"
+  },
+  {
+    "objectID": "20230710_garden/01_knappsack.html#decision-variables",
+    "href": "20230710_garden/01_knappsack.html#decision-variables",
+    "title": "knappsack problem",
+    "section": "(decision) variables",
+    "text": "(decision) variables\n\n\\(x_i\\), binary, 1 iff item \\(i\\) is put into knappsack"
+  },
+  {
+    "objectID": "20230710_garden/01_knappsack.html#parameter",
+    "href": "20230710_garden/01_knappsack.html#parameter",
+    "title": "knappsack problem",
+    "section": "parameter",
+    "text": "parameter\n\n\\(v_i\\) value of item \\(i\\)\n\\(w_i\\) weight of item \\(i\\)\n\\(W\\) capacity of knappsack\n\n\nimport pyomo.environ as pyo\nimport pandas as pd\nimport numpy as np\n\n\n# data\nitems = ['a','b','c','d']\nvalues = [8,3,6,11]\nweights= [5,7,4,3]\ncapacity_limit = 14\n\ndf = pd.DataFrame(\n    {'items' : items,\n     'values' : values,\n     'weights' : weights},\n    )\ndf['capacity'] = capacity_limit\n\ndisplay(df)\n\ndata = {\n    'model_name': 'bounded_knappsack',\n    'problem_data' : df,\n    'solver': 'cbc'\n}\n\n\n\n\n\n  \n    \n      \n      items\n      values\n      weights\n      capacity\n    \n  \n  \n    \n      0\n      a\n      8\n      5\n      14\n    \n    \n      1\n      b\n      3\n      7\n      14\n    \n    \n      2\n      c\n      6\n      4\n      14\n    \n    \n      3\n      d\n      11\n      3\n      14\n    \n  \n\n\n\n\n\n# model\n\ndef knappsack_01(data):\n    pdata = data['problem_data']\n    \n    m = pyo.ConcreteModel(data['model_name'])\n    \n    ## sets\n    m.Item = pyo.Set(initialize = list(pdata['items']), \n                     doc = 'list of items')\n    # var\n    m.x = pyo.Var(m.Item, domain = pyo.Binary, \n                  doc = '1 if item is part of knappsack')\n    ## param\n    @m.Param(m.Item, doc ='value of item i')\n    def value(m,i):\n        return pdata.loc[pdata['items'] == i,'values'].values[0]\n    \n    @m.Param(m.Item, doc ='weight of item i')\n    def weight(m,i):\n        return pdata.loc[pdata['items'] == i,'weights'].values[0]\n    \n    @m.Param(doc = 'capacity limit')\n    def cap_limit(m):\n        return list(pdata['capacity'].unique())[0]\n    \n    ## objective\n    m.OBJ = pyo.Objective(expr = sum(m.value[i] * m.x[i] for i in m.Item), sense = pyo.maximize)\n    \n    ## constraints\n    @m.Constraint(doc = 'knappsack capacity limit')\n    def c1(m):\n        return sum(m.weight[i] * m.x[i] for i in m.Item) <= m.cap_limit\n    \n    solver = pyo.SolverFactory(data['solver'])\n    solver.solve(m)\n    \n    return m\n\n\nm = knappsack_01(data)\n\n\ndef extract_solution(m):\n    solution = {r: [pyo.value(m.x[r])==1.0] for r in m.Item}\n    output = pd.DataFrame(data = solution)\n    output.index = ['object in knappsack']\n    return output\n\n\nextract_solution(m)\n\n\n\n\n\n  \n    \n      \n      a\n      b\n      c\n      d\n    \n  \n  \n    \n      object in knappsack\n      True\n      False\n      True\n      True"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html",
+    "href": "20220609_blending_models/01_blending.html",
+    "title": "Blending models - Steel production",
+    "section": "",
+    "text": "In blending or product mix problems, one tries to mix or extract ingredients subject to quality constraints.\nWe start with the following easy example in which we have one product and different raw materials. This example is taken from [@gueret1999applications, chap. 6.1].\n\n\nWe want to produce a predefined quantity of a product, e.g. steel. The produced product must have certain characteristics (grades) - see section below. In stock we have different possible ingredients, e.g. ores, and these ingredients contribute differently to the requirements and have different availablility and prices - see section below.\nWe want to determine the recipie which minimizes the production costs.\n\n\nCode\nimport pandas as pd\nimport pyomo.environ as pyo"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#sets",
+    "href": "20220609_blending_models/01_blending.html#sets",
+    "title": "Blending models - Steel production",
+    "section": "sets",
+    "text": "sets\n\n\\(raw\\) - set of raw materials\n\\(comp\\) - set of grade requirements"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#variables",
+    "href": "20220609_blending_models/01_blending.html#variables",
+    "title": "Blending models - Steel production",
+    "section": "variables",
+    "text": "variables\n\n\\(use_r\\) - used quantity in optimal recipie of raw material \\(r\\)"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#parameter",
+    "href": "20220609_blending_models/01_blending.html#parameter",
+    "title": "Blending models - Steel production",
+    "section": "parameter",
+    "text": "parameter\n\n\\(demand\\) - demand of the product\n\\(produce\\) - produced quatity of the product\n\\(cost_r\\) - costs of raw material \\(r\\)\n\\(P_{rc}\\) - percentage of component \\(c\\) in raw material \\(r\\)\n\\(Pmin_c\\) - minimal requirement of component \\(c\\) in product\n\\(Pmax_c\\) - maximal requirement of component \\(c\\) in product"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#objective",
+    "href": "20220609_blending_models/01_blending.html#objective",
+    "title": "Blending models - Steel production",
+    "section": "objective",
+    "text": "objective\n\nfind the recipe with minimal costs fulfilling the requirements"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#constraints",
+    "href": "20220609_blending_models/01_blending.html#constraints",
+    "title": "Blending models - Steel production",
+    "section": "constraints",
+    "text": "constraints\n\n(c1) produced quatity is given by the sum of the used rat materials (in tons)\n(c2) lower limit on the components in the final product\n(c3) upper limit on the components in the final product\n(c4) use only available quatities of the raw materials\n(c5) produced quatity fulfills demands"
+  },
+  {
+    "objectID": "20220609_blending_models/01_blending.html#deterministic-model",
+    "href": "20220609_blending_models/01_blending.html#deterministic-model",
+    "title": "Blending models - Steel production",
+    "section": "deterministic model",
+    "text": "deterministic model\n\\[\n\\begin{array}{llll}\n\\min & \\sum_{r\\in raw} cost_r \\cdot use_r & & \\\\\ns.t. & produce = \\sum_{r\\in raw} use_r & & (c1)\\\\\n     & \\sum_{r\\in raw} P_{rc}\\cdot use_r \\geq Pmin_c \\cdot produce & , \\forall c\\in comp & (c2)\\\\\n     & \\sum_{r\\in raw} P_{rc}\\cdot use_r \\leq Pmax_c \\cdot produce &  , \\forall c\\in comp & (c3)\\\\\n     & use_r \\leq avail_r &  , \\forall r\\in raw & (c4) \\\\\n     & produce \\geq demand & & (c5) \\\\\n     & use_r,produce \\geq 0 & & (c6)\n\\end{array}\n\\]\n\n\nCode\ndef alloy_blending(requirements,raw_mat, demand):\n    m = pyo.ConcreteModel('alloy production')\n    \n    # sets\n    m.raw = pyo.Set(initialize = raw_mat.raw_mat)\n    m.comp = pyo.Set(initialize = requirements.element)\n    \n    # parameter\n    @m.Param(m.raw, doc = 'costs of raw mat r')\n    def costs(m,r):\n        return raw_mat.loc[raw_mat['raw_mat'] == r, 'costs'].values[0]\n    @m.Param(m.raw, m.comp, doc = 'percentage of component c in raw material r')\n    def P(m,r,c):\n        return raw_mat.loc[raw_mat['raw_mat'] == r, c].values[0]\n    @m.Param(m.comp, doc= 'minimal percentage of component c in final product')\n    def Pmin(m,c):\n        return requirements.loc[requirements['element'] == c, 'min_grade'].values[0]\n    @m.Param(m.comp, doc= 'maximal percentage of component c in final product')\n    def Pmax(m,c):\n        return requirements.loc[requirements['element'] == c, 'max_grade'].values[0]\n    @m.Param(m.raw, doc = 'availability of raw materials')\n    def avail(m,r):\n        return raw_mat.loc[raw_mat['raw_mat'] == r, 'availability'].values[0]\n    @m.Param(doc = 'product demand')\n    def demand(m):\n        return demand\n    \n    # variables\n    m.use = pyo.Var(m.raw, domain = pyo.NonNegativeReals, doc = 'used tons of raw material r')\n    m.produced = pyo.Var(domain = pyo.NonNegativeReals, doc = 'tons produced')\n    \n    # objective\n    def objective(m):\n        return pyo.summation(m.costs, m.use)\n    m.OBJ = pyo.Objective(rule = objective(m), sense = pyo.minimize)\n    \n    # constraints\n    @m.Constraint(doc ='tons produced')\n    def c1(m):\n        return m.produced == pyo.summation(m.use)\n    \n    @m.Constraint(m.comp, doc = 'lower limit of grade in final product')\n    def c2(m, c):\n        return sum(m.P[r,c] * m.use[r] for r in m.raw) >= m.Pmin[c] * m.produced\n    @m.Constraint(m.comp, doc = 'upper limit of grade in final product')\n    def c3(m, c):\n        return sum(m.P[r,c] * m.use[r] for r in m.raw) <= m.Pmax[c] * m.produced\n    @m.Constraint(m.raw, doc = 'use component c maximal w.r.t. availability of c')\n    def c4(m, r):\n        return m.use[r] <= m.avail[r]\n    @m.Constraint(doc = 'produce at least the demand')\n    def c5(m):\n        return m.produced >= m.demand\n\n    \n    # solver\n    solver = pyo.SolverFactory('glpk')\n    solver.solve(m)\n    \n    return m"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html",
+    "href": "20220621_jobshop/00_bottleneck_machine.html",
+    "title": "Job shop scheduling",
+    "section": "",
+    "text": "Code\nimport pyomo.environ as pyo\nimport pyomo.gdp as gdp\nimport pandas as pd\nimport matplotlib.pyplot as plt"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#optimal-vs.-empirical-schedules",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#optimal-vs.-empirical-schedules",
+    "title": "Job shop scheduling",
+    "section": "Optimal vs. empirical schedules",
+    "text": "Optimal vs. empirical schedules\nIn order to see the benefit of mathematical optimization we proceed as follows:\n\nWe visualize and compute KPIs for certain empirical schedules.\nWe visualize and compute KPIs for optimal schedules with respect to different KPIs.\nWe determine an optimal solution for a given set of jobs and a given sets of machines."
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#example",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#example",
+    "title": "Job shop scheduling",
+    "section": "Example",
+    "text": "Example\nIn our discussion we use the following example of jobs.\n\n\nCode\njobs = {\n    'A': {'release':2, 'duration': 5, 'due': 10},\n    'B': {'release':5, 'duration': 6, 'due': 21},\n    'C': {'release':4, 'duration': 8, 'due': 15},\n    'D': {'release':0, 'duration': 4, 'due': 10},\n    'E': {'release':0, 'duration': 2, 'due':  5},\n    'F': {'release':8, 'duration': 3, 'due': 15},\n    'G': {'release':9, 'duration': 2, 'due': 22}\n}\npd.DataFrame(jobs).T.rename(columns = {'release': 'release time', \n                                       'duration': 'duration in hours',\n                                      'due':'due time'})\n\n\n\n\n\n\n  \n    \n      \n      release time\n      duration in hours\n      due time\n    \n  \n  \n    \n      A\n      2\n      5\n      10\n    \n    \n      B\n      5\n      6\n      21\n    \n    \n      C\n      4\n      8\n      15\n    \n    \n      D\n      0\n      4\n      10\n    \n    \n      E\n      0\n      2\n      5\n    \n    \n      F\n      8\n      3\n      15\n    \n    \n      G\n      9\n      2\n      22"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#gantt-charts",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#gantt-charts",
+    "title": "Job shop scheduling",
+    "section": "GANTT charts",
+    "text": "GANTT charts\nSchedules can be visualised using GANTT charts. In the next cells we define some helper functions, for example to plot a Gantt chart.\nAfterwards we consider empirical schedules, in particular we consider:\n\nFirst-In First-Out (FIFO)\nLast-In, First-Out (LIFO)\nShortest Processing Time First (SPT)\nEarliest Due Data (EDD)\n\n\n\nCode\n# copy and pasted from jeffrey !\ndef gantt(JOBS, SCHEDULE={}):\n    bw = 0.3\n    plt.figure(figsize=(12, 0.7*(len(JOBS.keys()))))\n    idx = 0\n    for j in sorted(JOBS.keys()):\n        x = JOBS[j]['release']\n        y = JOBS[j]['due']\n        plt.fill_between([x,y],[idx-bw,idx-bw],[idx+bw,idx+bw], color='cyan', alpha=0.6)\n        if j in SCHEDULE.keys():\n            x = SCHEDULE[j]['start']\n            y = SCHEDULE[j]['finish']\n            plt.fill_between([x,y],[idx-bw,idx-bw],[idx+bw,idx+bw], color='red', alpha=0.5)\n            plt.plot([x,y,y,x,x], [idx-bw,idx-bw,idx+bw,idx+bw,idx-bw],color='k')\n            plt.text((SCHEDULE[j]['start'] + SCHEDULE[j]['finish'])/2.0,idx,\n                'Job ' + j, color='white', weight='bold',\n                horizontalalignment='center', verticalalignment='center')\n        idx += 1\n\n    plt.ylim(-0.5, idx-0.5)\n    plt.title('Job Schedule')\n    plt.xlabel('Time')\n    plt.ylabel('Jobs')\n    plt.yticks(range(len(JOBS)), JOBS.keys())\n    plt.grid()\n    xlim = plt.xlim()\n    \n    if SCHEDULE:\n        for j in SCHEDULE.keys():\n            if 'machine' not in SCHEDULE[j].keys():\n                SCHEDULE[j]['machine'] = 1\n        MACHINES = sorted(set([SCHEDULE[j]['machine'] for j in SCHEDULE.keys()]))\n\n        plt.figure(figsize=(12, 0.7*len(MACHINES)))\n        for j in sorted(SCHEDULE.keys()):\n            idx = MACHINES.index(SCHEDULE[j]['machine'])\n            x = SCHEDULE[j]['start']\n            y = SCHEDULE[j]['finish']\n            plt.fill_between([x,y],[idx-bw,idx-bw],[idx+bw,idx+bw], color='red', alpha=0.5)\n            plt.plot([x,y,y,x,x], [idx-bw,idx-bw,idx+bw,idx+bw,idx-bw],color='k')\n            plt.text((SCHEDULE[j]['start'] + SCHEDULE[j]['finish'])/2.0,idx,\n                'Job ' + j, color='white', weight='bold',\n                horizontalalignment='center', verticalalignment='center')\n        plt.xlim(xlim)\n        plt.ylim(-0.5, len(MACHINES)-0.5)\n        plt.title('Machine Schedule')\n        plt.yticks(range(len(MACHINES)), MACHINES)\n        plt.ylabel('Machines')\n        plt.grid()\n\n\n\n\nCode\n# jeffrery's code !\ndef schedule(JOBS, order):\n    \"\"\"Schedule a dictionary of JOBS on a single machine in a specified order.\"\"\"\n    start = 0\n    finish = 0\n    SCHEDULE = {}\n    for job in order:\n        start = max(JOBS[job]['release'], finish)\n        finish = start + JOBS[job]['duration']\n        SCHEDULE[job] = {'start': start, 'finish': finish}\n    return SCHEDULE\n\n\n\n\nCode\n# mainly jeffrery's code !\ndef schedule_from_model(m, machines = 1):\n    SCHEDULE = {}\n    for j in m.jobs:\n        if machines == 1:\n            tmp = 1\n        else:\n            tmp = [mach for mach in machines if pyo.value(m.job_to_machine[j,mach]) == 1][0]\n        SCHEDULE[j] = {\n            'start': m.start[j](), \n            'finish': m.start[j]() + m.duration[j],\n            'machine': tmp\n        }\n    return SCHEDULE\n\n\n\n\nCode\n# jeffreys code\n## KPI for job schedule\ndef kpi(JOBS, SCHEDULE):\n    KPI = {}\n    KPI['Makespan'] = max(SCHEDULE[job]['finish'] for job in SCHEDULE)\n    KPI['Max Pastdue'] = max(max(0, SCHEDULE[job]['finish'] - JOBS[job]['due']) for job in SCHEDULE)\n    KPI['Sum of Pastdue'] = sum(max(0, SCHEDULE[job]['finish'] - JOBS[job]['due']) for job in SCHEDULE)\n    KPI['Number Pastdue'] = sum(SCHEDULE[job]['finish'] > JOBS[job]['due'] for job in SCHEDULE)\n    KPI['Number on Time'] = sum(SCHEDULE[job]['finish'] <= JOBS[job]['due'] for job in SCHEDULE)\n    KPI['Fraction on Time'] = KPI['Number on Time']/len(SCHEDULE)\n    return KPI"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#a-manual-schedule",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#a-manual-schedule",
+    "title": "Job shop scheduling",
+    "section": "A Manual Schedule",
+    "text": "A Manual Schedule\nBy specifying schedules we can evaluate and compare them. The following snippet shows how the user can specify a schedule and judge its performance through the KPIs.\nWe invite the reader to spend some minutes trying to find a better schedule. Spoiler: The given schedule here is already optimal in a way we will see later.\n\n\nCode\n# define schedule\njob_order = ['E','A','D','F','B','G','C']\n\n# visualize schedule\nSCHEDULE = schedule(jobs, order=job_order)\ngantt(jobs, SCHEDULE)\nkpi(jobs, SCHEDULE)\n\n\n{'Makespan': 30,\n 'Max Pastdue': 15,\n 'Sum of Pastdue': 16,\n 'Number Pastdue': 2,\n 'Number on Time': 5,\n 'Fraction on Time': 0.7142857142857143}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#alphabetic-schedule",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#alphabetic-schedule",
+    "title": "Job shop scheduling",
+    "section": "Alphabetic schedule",
+    "text": "Alphabetic schedule\nLets assume the schedule is given by the names of the Jobs. This chould represent a case in which the schedule is predefined through its names by a human or by previous processes.\n\n\nCode\nSCHEDULE = schedule(jobs, order=sorted(jobs.keys()))\ngantt(jobs, SCHEDULE)\nkpi(jobs, SCHEDULE)\n\n\n{'Makespan': 32,\n 'Max Pastdue': 22,\n 'Sum of Pastdue': 68,\n 'Number Pastdue': 5,\n 'Number on Time': 2,\n 'Fraction on Time': 0.2857142857142857}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#fifo---first-in-first-out",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#fifo---first-in-first-out",
+    "title": "Job shop scheduling",
+    "section": "FIFO - first in first out",
+    "text": "FIFO - first in first out\nWe evaluate a schedule, in which the ordering is defined by the release time of the job, i.e. what comes first is done first.\n\n\nCode\ndef fifo(JOBS):\n    order_by_release = sorted(JOBS, key=lambda job: JOBS[job]['release'])\n    return schedule(JOBS, order_by_release)\n\ngantt(jobs, fifo(jobs))\nkpi(jobs, fifo(jobs))\n\n\n{'Makespan': 30,\n 'Max Pastdue': 13,\n 'Sum of Pastdue': 31,\n 'Number Pastdue': 6,\n 'Number on Time': 1,\n 'Fraction on Time': 0.14285714285714285}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#lifo---last-in-first-out",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#lifo---last-in-first-out",
+    "title": "Job shop scheduling",
+    "section": "LIFO - last in first out",
+    "text": "LIFO - last in first out\nWe put the jobs on a stack as follows: At time \\(t\\) we put all jobs with release time equal to \\(t\\) on top of the stack. If the machine has a free capacity, we assign the job which is on top of the stack to the machine and remove the job from the stack.\n\n\nCode\ndef lifo(JOBS):\n    unfinished_jobs = set(JOBS.keys())\n    start = 0\n    while len(unfinished_jobs) > 0:\n        start = max(start, min(JOBS[job]['release'] for job in unfinished_jobs))\n        lifo = {job:JOBS[job]['release'] for job in unfinished_jobs if JOBS[job]['release'] <= start}\n        job = max(lifo, key=lifo.get)\n        finish = start + JOBS[job]['duration']\n        unfinished_jobs.remove(job)\n        SCHEDULE[job] = {'machine': 1, 'start': start, 'finish': finish}\n        start = finish\n    return SCHEDULE          \n    \ngantt(jobs, lifo(jobs))\nkpi(jobs, lifo(jobs))\n\n\n{'Makespan': 30,\n 'Max Pastdue': 20,\n 'Sum of Pastdue': 34,\n 'Number Pastdue': 3,\n 'Number on Time': 4,\n 'Fraction on Time': 0.5714285714285714}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#spt---shortest-processing-time",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#spt---shortest-processing-time",
+    "title": "Job shop scheduling",
+    "section": "SPT - shortest processing time",
+    "text": "SPT - shortest processing time\nShortest processing time (SPT) is a scheduling policy that selects for execution the waiting job with the smallest execution time.\n\n\nCode\ndef spt(JOBS):\n    unfinished_jobs = set(JOBS.keys())\n    start = 0\n    while len(unfinished_jobs) > 0:\n        start = max(start, min(JOBS[job]['release'] for job in unfinished_jobs))\n        spt = {job:JOBS[job]['duration'] for job in unfinished_jobs if JOBS[job]['release'] <= start}\n        job = min(spt, key=spt.get)\n        finish = start + JOBS[job]['duration']\n        unfinished_jobs.remove(job)\n        SCHEDULE[job] = {'machine': 1, 'start': start, 'finish': finish}\n        start = finish\n    return SCHEDULE          \n    \ngantt(jobs, spt(jobs))\nkpi(jobs, spt(jobs))\n\n\n{'Makespan': 30,\n 'Max Pastdue': 15,\n 'Sum of Pastdue': 18,\n 'Number Pastdue': 4,\n 'Number on Time': 3,\n 'Fraction on Time': 0.42857142857142855}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#edd---earliest-due-date",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#edd---earliest-due-date",
+    "title": "Job shop scheduling",
+    "section": "EDD - earliest due date",
+    "text": "EDD - earliest due date\nEarliest due date (EDD) is a dynamic priority scheduling algorithm used in real-time operating systems to place processes in a priority queue. Whenever a scheduling event occurs (task finishes, new task released, etc.) the queue will be searched for the process closest to its deadline.\n\n\nCode\ndef edd(JOBS):\n    unfinished_jobs = set(JOBS.keys())\n    start = 0\n    while len(unfinished_jobs) > 0:\n        start = max(start, min(JOBS[job]['release'] for job in unfinished_jobs))\n        edd = {job:JOBS[job]['due'] for job in unfinished_jobs if JOBS[job]['release'] <= start}\n        job = min(edd, key=edd.get)\n        finish = start + JOBS[job]['duration']\n        unfinished_jobs.remove(job)\n        SCHEDULE[job] = {'machine': 1, 'start': start, 'finish': finish}\n        start = finish\n    return SCHEDULE          \n    \ngantt(jobs, edd(jobs))\nkpi(jobs, edd(jobs))\n\n\n{'Makespan': 30,\n 'Max Pastdue': 8,\n 'Sum of Pastdue': 27,\n 'Number Pastdue': 5,\n 'Number on Time': 2,\n 'Fraction on Time': 0.2857142857142857}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#modeling",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#modeling",
+    "title": "Job shop scheduling",
+    "section": "Modeling",
+    "text": "Modeling\nWe give a algebraic representation of the model.\n\nSets\n\n\\(J\\) set of unique job IDs \\(j\\)\n\\(order:= \\{(i,j)~|~i,j\\in J\\}\\) - used to define weather job \\(j\\) is executed before job \\(i\\) or not\n\n\n\nParameter\n\n\\(due_j\\) due time of job \\(j\\)\n\\(duration_j\\) duration of job \\(j\\)\n\\(release_j\\) time job \\(j\\) becomes available for processing\n\n\n\nDecision variables\n\n\\(start_j\\) start of job \\(j\\)\n\n\n\nState variables\n\n\\(finished_j\\) time by which job \\(j\\) finishes\n\\(pastdue_j\\) time by which job \\(j\\) is past due\n\\(early_j\\) time by which job \\(j\\) is finished early\n\n\n\nConstraints\n\njob can not start until it is released for processing\n\n\\[\nstart_j\\geq release_j\n\\]\n\nexpressing timeline and how time variables are related\n\n\\[\n\\begin{array}{rl}\nstart_j + duration_j + early_j &= due_j + pastdue_j \\\\\nearly_j & \\geq 0 \\\\\npastdue_j & \\geq 0\n\\end{array}\n\\]\n\ndefinition of the objective makespan\n\n\\[\nfinish_j \\leq makespan\n\\]\n\ndefinition of state variable finish_j\n\n\\[\nstart_j + duration_j = finish_j\n\\]\n\nNo pair of jobs operates on the same machine at the same time.\n\nThis can be easily express as a set of disjunctions as follows:\n\\[\n\\left[finish_i \\leq start_j \\right] \\vee \\left[finish_j \\leq start_i \\right], \\; \\forall i<j\n\\]\n\n\nObjective\nAs we have mentioned in the introduction the application and circumstances define what an optimal schedule is."
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#implementation",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#implementation",
+    "title": "Job shop scheduling",
+    "section": "Implementation",
+    "text": "Implementation\nThe following implementation allows optimizing with respect to the following objectives: - makespan, i.e. the time to complete all jobs - sum_pastdue, i.e. sum of past due\n\n\nCode\ndef model_1_machine(jobs, optimize = \"makespan\"):\n    \n    m = pyo.ConcreteModel()\n    \n    # sets\n    m.jobs = pyo.Set(initialize = jobs.keys())\n    m.order = pyo.Set(initialize = m.jobs * m.jobs, dimen = 2, filter = lambda m,i,j : i < j)\n    \n    # parameters\n    @m.Param(m.jobs, doc = \"job due time\")\n    def due(m,i):\n        return jobs[i]['due']\n    @m.Param(m.jobs, doc = \"job duration time\")\n    def duration(m,i):\n        return jobs[i]['duration']\n    @m.Param(m.jobs, doc = \"job release time\")\n    def release(m,i):\n        return jobs[i]['release']\n    \n    # upper bound on decision variables, in this case we choose the worst case \n    max_time = sum(m.duration[i] for i in m.jobs) + max(m.release[i] for i in m.jobs)\n    \n    # decision variables\n    m.start = pyo.Var(m.jobs, domain = pyo.NonNegativeReals, bounds = (0, max_time))\n    ## additional variables\n    m.finish = pyo.Var(m.jobs, domain = pyo.NonNegativeReals, bounds = (0, max_time))\n    m.pastdue = pyo.Var(m.jobs, domain = pyo.NonNegativeReals, bounds = (0, max_time))\n    m.early = pyo.Var(m.jobs, domain = pyo.NonNegativeReals, bounds = (0,max_time))\n    \n    # addtional variables for objectives\n    m.makespan = pyo.Var(domain = pyo.NonNegativeReals, bounds = (0, max_time), doc = \"time until all jobs are done\")\n    m.maxpastdue = pyo.Var(domain = pyo.NonNegativeReals, bounds = (0,max_time), doc = \"time\")\n    m.ispastdue = pyo.Var(m.jobs, domain = pyo.Binary)\n    \n    # objective\n    if optimize == 'makespan':\n        m.OBJ = pyo.Objective(expr = m.makespan, sense = pyo.minimize)\n    elif optimize == 'sum_pastdue':\n        m.OBJ = pyo.Objective(expr = sum([m.pastdue[i] for i in m.jobs]), sense = pyo.minimize)\n    else:\n        print('wrong value for parameter optimize. allowed are \"makespan\" or \"sum_pastdue\" optimize = makespan used instead.')\n        m.OBJ = pyo.Objective(expr = m.makespan, sense = pyo.minimize)\n\n    # constraints\n    @m.Constraint(m.jobs)\n    def job_finish(m,i, doc = \"defines job time finish\"):\n        return m.finish[i] == m.start[i] + m.duration[i]\n    @m.Constraint(m.jobs, doc = \"release before start\")\n    def start_after_release(m,i):\n        return m.start[i] >= m.release[i]\n    @m.Constraint(m.jobs, doc =\"describe position of job w.r.t. time in schedule\")\n    def time_relations(m,i):\n        return m.start[i] + m.duration[i] + m.early[i] == m.due[i] + m.pastdue[i]\n    @m.Constraint(m.jobs, doc = \"finish time lower than make span\")\n    def finish_lower_makespan(m,i):\n        return m.finish[i] <= m.makespan\n    \n    m.schedule = gdp.Disjunction(m.order, rule = lambda m,i,j:\n                                [m.finish[i] <= m.start[j],\n                                 m.finish[j] <= m.start[i]])\n    \n    @m.Constraint(m.jobs, doc = \"past due lower than max past due\")\n    def pastdue_lower_maxpastdue(m,i):\n        return m.pastdue[i] <= m.maxpastdue\n    @m.Constraint(m.jobs, doc =\"\")\n    def pastdue_lower_max_time(m,i):\n        return m.pastdue[i] <= max_time * m.ispastdue[i]\n    pyo.TransformationFactory('gdp.hull').apply_to(m)\n    pyo.SolverFactory('glpk').solve(m)#.write()\n    \n    return m\n\n\n\nOptimal makespan\nBy defintion makespan is the time to complete all jobs.\n\n\nCode\nmodel = model_1_machine(jobs, optimize = \"makespan\")\nSCHEDULE = schedule_from_model(model)\ngantt(jobs, SCHEDULE)\nkpi(jobs, SCHEDULE)\n\n\n{'Makespan': 30.0,\n 'Max Pastdue': 11.0,\n 'Sum of Pastdue': 29.0,\n 'Number Pastdue': 3,\n 'Number on Time': 4,\n 'Fraction on Time': 0.5714285714285714}"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#modeling-1",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#modeling-1",
+    "title": "Job shop scheduling",
+    "section": "Modeling",
+    "text": "Modeling\nThe algebraic representation of the model is the following:"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#sets-1",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#sets-1",
+    "title": "Job shop scheduling",
+    "section": "Sets",
+    "text": "Sets\n\n\\(machines\\) - elements are abbreviated with \\(m\\)\n\\(jobs\\) - elements are abbreviated with \\(j\\) or \\(i\\)\n\\(order:= jobs \\times jobs\\) - schedule order of jobs"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#parameters",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#parameters",
+    "title": "Job shop scheduling",
+    "section": "Parameters",
+    "text": "Parameters\n\n\\(release_j\\)\n\\(duration_j\\)\n\\(due_j\\)\n\\(BigM\\) - big M integer in modeling the disjunctions"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#variables",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#variables",
+    "title": "Job shop scheduling",
+    "section": "Variables",
+    "text": "Variables\n\nDecision variables\n\n\\(start_i\\) - time job \\(i\\) starts\n\\(job\\_to\\_machine_{j,m}\\) - binary variable, 1 iff job \\(j\\) is assigned to machine \\(m\\)\n\n\n\nState variables\n\n\\(pastdue_i\\) - time job \\(i\\) is past due\n\\(early_i\\) - time job \\(i\\) is finished early\n\n\n\nAssignment to machines\n\n\\(job\\_to\\_machine_{j,m}\\) - binary assingment of jobs to machine; \\(job\\_to\\_machine_{j,m}==1\\) iff job \\(j\\) is executed on \\(m\\)\n\n\n\nObjective vars\n\nmakespan - non negative real\nispastdue - binary, 1 iff job finish past due\nmaxpastdue - non negative real\n\n\n\nConstraints\nBecause the following model should work for different objective functions some constraints might be unused for a given objective function, but we believe it is easy to identify them.\n\\[\n\\begin{array}{llc}\n  start_j \\geq release_j & \\;\\forall j\\in jobs & c_1\\\\\n  start_j + duration_j + early_j = due_j + pastdue_j & \\;\\forall j\\in jobs &c_2\\\\\n  [early_j==0] \\vee [pastdue_j == 0] & \\;\\forall j\\in jobs & d_1\\\\\n  [pastdue_j == 0] \\vee [ispastdue_j == 1] & \\;\\forall j\\in jobs & d_2\\\\\n  \\sum_m jobs\\_to\\_machine_{j,m} = 1 & \\;\\forall j\\in jobs, \\forall m \\in machines & c_3\\\\\n  pastdue_j <= maxpastdue & \\;\\forall j\\in jobs & c_4\\\\\n  start_j + duration_j <= makespan & \\;\\forall j\\in jobs & c_5\\\\\n  [T1] \\vee_{i,j,m} [T2] & \\;\\forall i,j \\in order, \\forall m \\in machines & d_3\n\\end{array}\n\\]\nwhere \\[\n\\begin{array}{c}\nT1 := start_i + duration_i \\leq start_j + M(1-jobs\\_to\\_machine_{i,m}) +  M(1-jobs\\_to\\_machine_{j,m})\\\\\nT2 := start_j + duration_j \\leq start_i + M(1-jobs\\_to\\_machine_{i,m}) +  M(1-jobs\\_to\\_machine_{j,m})\n\\end{array}\n\\]\n\n\nConstraints explaination\n\n\\(c_1\\) job starts after its release\n\\(c_2\\) relation among time variables - required because not all jobs may finish before their due time\n\\(d_1\\) job is either early or pastdue\n\\(d_2\\) definition of objective variable ispastdue\n\\(c_3\\) each job is assign to one and only one machine\n\\(c_4\\) definition of objective variable maxpastdue\n\\(c_5\\) definition of objective variable makespan\n\\(d_3\\) job \\(j\\) does not start before previous job \\(i\\) has finished on machine \\(m\\)"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#example-scheduling-multiple-machines",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#example-scheduling-multiple-machines",
+    "title": "Job shop scheduling",
+    "section": "Example scheduling multiple machines",
+    "text": "Example scheduling multiple machines\nWe consider two machines which should perform the following jobs:\n\n\nCode\nmachines = ['1','2']\njobs = {\n    'A': {'release':2, 'duration': 5, 'due': 10},\n    'B': {'release':5, 'duration': 6, 'due': 21},\n    'C': {'release':4, 'duration': 8, 'due': 15},\n    'D': {'release':0, 'duration': 4, 'due': 10},\n    'E': {'release':0, 'duration': 2, 'due':  5},\n    'F': {'release':8, 'duration': 3, 'due': 15},\n    'G': {'release':9, 'duration': 2, 'due': 22}\n}\n\n\n\n\nCode\ndef model_multiple_machines(jobs, machines, optimize = 'makespan'):\n    #instanciate model\n    m = pyo.ConcreteModel(\"multiple jobs, multiple workers\")\n    \n    # index sets\n    m.jobs = pyo.Set(initialize = jobs.keys())\n    m.machines = pyo.Set(initialize = machines)\n    m.order = pyo.Set(initialize = m.jobs * m.jobs, dimen = 2, filter = lambda m,i,j: i<j)\n    \n    # parameters\n    @m.Param(m.jobs, doc = \"job due time\")\n    def due(m,i):\n        return jobs[i]['due']\n    @m.Param(m.jobs, doc = \"job duration time\")\n    def duration(m,i):\n        return jobs[i]['duration']\n    @m.Param(m.jobs, doc = \"job release time\")\n    def release(m,i):\n        return jobs[i]['release']\n    # doc = \"big M integer in modeling disjunctions\" and apply hull transform\n    BigM = max([m.release[j] for j in m.jobs]) + sum([m.duration[j] for j in m.jobs])\n    \n    # variables\n    ## decision / timeline variables\n    m.start = pyo.Var(m.jobs, domain = pyo.NonNegativeReals,\n                      bounds = (0, 1000) ,\n                      doc = \"start time of job\")\n    m.pastdue = pyo.Var(m.jobs, domain = pyo.NonNegativeReals,\n                        bounds = (0, 1000),\n                        doc = \"time job is past due\")\n    m.early = pyo.Var(m.jobs, domain = pyo.NonNegativeReals,\n                      bounds = (0, 10000),\n                      doc = \"time job is finished early\")\n    \n    ## objective variables\n    m.makespan = pyo.Var(domain = pyo.NonNegativeReals, doc = \"time to complete all jobs\")\n    m.ispastdue = pyo.Var(m.jobs, domain = pyo.Binary, doc = \"binary iff job is overdue\")\n    m.maxpastdue = pyo.Var(domain = pyo.NonNegativeReals, doc = \"\")\n    \n    ## additional variales\n    m.job_to_machine = pyo.Var(m.jobs, m.machines, domain = pyo.Binary, doc = \"binary assignment job to machine\")\n    \n    # objective\n    if optimize == 'makespan':\n        m.OBJ = pyo.Objective(expr = m.makespan, sense = pyo.minimize)\n    elif optimize == 'sum_pastdue':\n        m.OBJ = pyo.Objective(expr = sum([m.pastdue[i] for i in m.jobs]), sense = pyo.minimize)\n    else:\n        print('wrong value for parameter optimize. allowed are \"makespan\" or \"sum_pastdue\" optimize = makespan used instead.')\n        m.OBJ = pyo.Objective(expr = m.makespan, sense = pyo.minimize)\n\n    # constraint / disjunctions\n    @m.Constraint(m.jobs, doc = \"job start after release\")\n    def c1(m,i):\n        return m.start[i] >= m.release[i]\n    \n    @m.Constraint(m.jobs, doc = \"time variable relation\")\n    def c2(m,i):\n        return m.start[i] + m.duration[i] + m.early[i] == m.due[i] + m.pastdue[i]\n    \n    @m.Disjunction(m.jobs, doc = \"job either early or pastdue\")\n    def d1(m,i):\n        return [m.early[i]==0, m.pastdue[i]==0]\n    \n    @m.Disjunction(m.jobs, doc = \"\")\n    def d2(m,j):\n        return [m.pastdue[j] == 0, m.ispastdue[j] == 1],\n    \n    @m.Constraint(m.jobs, doc = \"each job is assigned to one and only one machine\")\n    def c3(m,j):\n        return (sum(m.job_to_machine[j,machine] for machine in m.machines) == 1)\n    \n    @m.Constraint(m.jobs, doc = \"define objective variable maxpastdue\")\n    def  c4(m,j):\n        return m.pastdue[j] <= m.maxpastdue\n    \n    @m.Constraint(m.jobs, doc = \"define objective variable makespan\")\n    def c6(m,i):\n        return m.start[i] + m.duration[i] <= m.makespan\n    \n    @m.Disjunction(m.machines, m.order, doc = \"ordering of jobs\")\n    def d3(m, machine, i,j):\n        return [m.start[i] + m.duration[i] <= m.start[j] + BigM * ((1 - m.job_to_machine[i,machine]) + (1 - m.job_to_machine[j,machine])),\n                m.start[j] + m.duration[j] <= m.start[i] + BigM * ((1 - m.job_to_machine[i,machine]) + (1 - m.job_to_machine[j,machine]))\n               ]\n    transform = pyo.TransformationFactory('gdp.hull')\n    transform.apply_to(m)\n    # solve model\n    pyo.SolverFactory('glpk').solve(m)\n    return m"
+  },
+  {
+    "objectID": "20220621_jobshop/00_bottleneck_machine.html#optimal-makespan---multiple-machines",
+    "href": "20220621_jobshop/00_bottleneck_machine.html#optimal-makespan---multiple-machines",
+    "title": "Job shop scheduling",
+    "section": "Optimal makespan - multiple machines",
+    "text": "Optimal makespan - multiple machines\n\n\nCode\nmodel = model_multiple_machines(jobs, machines, optimize = 'makespan')\nSCHEDULE = schedule_from_model(model, machines)\ngantt(jobs, SCHEDULE)\nkpi(jobs, SCHEDULE)\n\n\n{'Makespan': 15.0,\n 'Max Pastdue': 0,\n 'Sum of Pastdue': 0,\n 'Number Pastdue': 0,\n 'Number on Time': 7,\n 'Fraction on Time': 1.0}"
+  }
+]
