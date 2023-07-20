@@ -2,7 +2,6 @@
   {
     "listing": "/index.html",
     "items": [
-      "/nbs/20230717_ORTools/02_8queens.html",
       "/nbs/20230710_garden/01_knappsack.html",
       "/nbs/SensitivityAnalysis/01_sensitivity_analysis.html",
       "/nbs/20230308_scip/03_multicommodity_transportProblem.html",
@@ -12,8 +11,8 @@
       "/nbs/20221129_citation/index.html",
       "/nbs/20221127_jupyter_test/index.html",
       "/nbs/20220928_github_actions/index.html",
-      "/nbs/20220621_jobshop/00_bottleneck_machine.html",
       "/nbs/20230717_ORTools/01_intro_ORTools.html",
+      "/nbs/20220621_jobshop/00_bottleneck_machine.html",
       "/nbs/20220609_blending_models/01_blending.html",
       "/nbs/20220609_blending_models/02_food_production.html"
     ]

@@ -208,5 +208,12 @@
     "title": "Job shop scheduling",
     "section": "Optimal makespan - multiple machines",
     "text": "Optimal makespan - multiple machines\n\n\nCode\nmodel = model_multiple_machines(jobs, machines, optimize = 'makespan')\nSCHEDULE = schedule_from_model(model, machines)\ngantt(jobs, SCHEDULE)\nkpi(jobs, SCHEDULE)\n\n\n{'Makespan': 15.0,\n 'Max Pastdue': 0,\n 'Sum of Pastdue': 0,\n 'Number Pastdue': 0,\n 'Number on Time': 7,\n 'Fraction on Time': 1.0}"
+  },
+  {
+    "objectID": "20230717_ORTools/02_8queens.html",
+    "href": "20230717_ORTools/02_8queens.html",
+    "title": "blog",
+    "section": "",
+    "text": "import sys\nimport time\nfrom ortools.sat.python import cp_model\n\n\nmodel = cp_model.CpModel()\n\n\n# create variables\nboard_size = 4\nqueens = [\n    model.NewIntVar(0, board_size - 1, 'x%i' % i) for i in range(board_size)\n]\n\n\n# create constraints\n# All rows must be different.\nmodel.AddAllDifferent(queens)\n\n# No two queens can be on the same diagonal.\nmodel.AddAllDifferent(queens[i] + i for i in range(board_size))\nmodel.AddAllDifferent(queens[i] - i for i in range(board_size))\n\n<ortools.sat.python.cp_model.Constraint>\n\n\n\nclass NQueenSolutionPrinter(cp_model.CpSolverSolutionCallback):\n    \"\"\"Print intermediate solutions.\"\"\"\n\n    def __init__(self, queens):\n        cp_model.CpSolverSolutionCallback.__init__(self)\n        self.__queens = queens\n        self.__solution_count = 0\n        self.__start_time = time.time()\n\n    def solution_count(self):\n        return self.__solution_count\n\n    def on_solution_callback(self):\n        current_time = time.time()\n        print('Solution %i, time = %f s' %\n              (self.__solution_count, current_time - self.__start_time))\n        self.__solution_count += 1\n\n        all_queens = range(len(self.__queens))\n        for i in all_queens:\n            for j in all_queens:\n                if self.Value(self.__queens[j]) == i:\n                    # There is a queen in column j, row i.\n                    print('Q', end=' ')\n                else:\n                    print('_', end=' ')\n            print()\n        print()\n\n\nsolver = cp_model.CpSolver()\nsolution_printer = NQueenSolutionPrinter(queens)\nsolver.parameters.enumerate_all_solutions = True\nsolver.Solve(model, solution_printer)\n\nSolution 0, time = 0.008995 s\n_ Q _ _ \n_ _ _ Q \nQ _ _ _ \n_ _ Q _ \n\nSolution 1, time = 0.010817 s\n_ _ Q _ \nQ _ _ _ \n_ _ _ Q \n_ Q _ _ \n\n\n\n4"
   }
 ]
