@@ -226,7 +226,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">model</a></li>
   </ul></li>
   <li><a href="#add-rotation-to-model" id="toc-add-rotation-to-model" class="nav-link" data-scroll-target="#add-rotation-to-model">Add rotation to model</a></li>
-  <li><a href="#add-packing-in-2-dimensions" id="toc-add-packing-in-2-dimensions" class="nav-link" data-scroll-target="#add-packing-in-2-dimensions">Add packing in 2 dimensions</a></li>
+  <li><a href="#add-packing-in-2-dimensions" id="toc-add-packing-in-2-dimensions" class="nav-link" data-scroll-target="#add-packing-in-2-dimensions">Add packing in 2 dimensions</a>
+  <ul class="collapse">
+  <li><a href="#additional-constraints" id="toc-additional-constraints" class="nav-link" data-scroll-target="#additional-constraints">Additional constraints</a></li>
+  <li><a href="#model-1" id="toc-model-1" class="nav-link" data-scroll-target="#model-1">Model</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -249,12 +253,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>summary</li>
 </ol>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyomo.environ <span class="im">as</span> pyo</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyomo.gdp <span class="im">as</span> gdp</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Rectangle </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="abstract-model-linear-packing" class="level2">
 <h2 class="anchored" data-anchor-id="abstract-model-linear-packing">abstract model “linear packing”</h2>
@@ -308,9 +315,14 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
 \end{array}     
 \]</span></p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># helper functions</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">## nb param</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>number_of_boxes <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>shelf_depth <span class="op">=</span> <span class="dv">1</span> <span class="co"># will be overwritten</span></span>
@@ -327,17 +339,23 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">## data generation</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span>{</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data'</span> : gen_box(),</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'solver'</span> : <span class="st">'cbc'</span>,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'model_name'</span>: <span class="st">'strip_packing'</span>,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>shelf_depth <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> data[<span class="st">'data'</span>][<span class="st">'h'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>boxes <span class="op">=</span> gen_box()</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span>{</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data'</span> : boxes,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'solver'</span> : <span class="st">'cbc'</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'model_name'</span>: <span class="st">'strip_packing'</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'shelf_depth'</span> : <span class="dv">2</span> <span class="op">*</span> boxes[<span class="st">'h'</span>].<span class="bu">max</span>()</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>shelf_depth <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> data[<span class="st">'data'</span>][<span class="st">'h'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'data'</span>].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 
 <div>
@@ -354,27 +372,27 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
     <tr>
       <th>0</th>
       <td>29</td>
-      <td>53</td>
+      <td>15</td>
     </tr>
     <tr>
       <th>1</th>
       <td>56</td>
-      <td>25</td>
+      <td>9</td>
     </tr>
     <tr>
       <th>2</th>
       <td>82</td>
-      <td>23</td>
+      <td>13</td>
     </tr>
     <tr>
       <th>3</th>
       <td>13</td>
-      <td>21</td>
+      <td>87</td>
     </tr>
     <tr>
       <th>4</th>
       <td>35</td>
-      <td>12</td>
+      <td>9</td>
     </tr>
   </tbody>
 </table>
@@ -382,6 +400,8 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
 </div>
 </div>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _packing(df):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""temp function to transform input data into a df like the solution for visualization"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    dt <span class="op">=</span> df.copy()</span>
@@ -420,83 +440,103 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"width"</span>)</span>
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"heigth"</span>)</span>
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizse fifo packing with no rotation</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> _packing(data[<span class="st">'data'</span>])</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plot_solution(sol, shelf_depth <span class="op">=</span> shelf_depth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># visualizse fifo packing with no rotation</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> _packing(data[<span class="st">'data'</span>])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plot_solution(sol, shelf_depth <span class="op">=</span> shelf_depth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 50.9 ms, sys: 12.6 ms, total: 63.5 ms
+Wall time: 79.8 ms</code></pre>
+</div>
 <div class="cell-output cell-output-display">
-<p><img src="02_strippacking_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+<p><img src="02_strippacking_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pyomo implementation</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_1(data):</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""simple strip packing, but useful to study good/new neighboor constraints later"""</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># simple upper bound</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    w_bound <span class="op">=</span> data[<span class="st">'data'</span>][<span class="st">'w'</span>].<span class="bu">sum</span>()</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># instanciate model</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel(data[<span class="st">'model_name'</span>])</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    m.I <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> data[<span class="st">'data'</span>].index, doc <span class="op">=</span> <span class="st">'items'</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    m.Order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.I <span class="op">*</span> m.I, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j: i<span class="op">&lt;</span>j)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vars</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    m.x1 <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,w_bound))</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    m.x2 <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,w_bound))</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    m.W <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, doc <span class="op">=</span> <span class="st">'total width, to be optimized'</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    m.r <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.Boolean, initialize <span class="op">=</span> <span class="va">False</span>, doc <span class="op">=</span> <span class="st">'not used in no rotation model'</span>)</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.W, sense <span class="op">=</span> pyo.minimize)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># param</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> w(m,i):</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'w'</span>].values[<span class="dv">0</span>]</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I, doc <span class="op">=</span> <span class="st">'determines box i size'</span>)</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> bounding_box(m,i):</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.w[i]</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I, doc <span class="op">=</span> <span class="st">'defines total width, to be optimized'</span>)</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> total_width(m,i):</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">&lt;=</span> m.W</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.Order, xor<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> no_overlap(m, i, j):</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [m.x2[i] <span class="op">&lt;=</span> m.x1[j],</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                m.x2[j] <span class="op">&lt;=</span> m.x1[i]]</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>       </span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">"gdp.bigm"</span>).apply_to(m)</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose solver and apply solver</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> pyo.SolverFactory(data[<span class="st">'solver'</span>])</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    solver.solve(m)</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract solution</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> data[<span class="st">'data'</span>].copy()</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract coords from solution</span></span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x1'</span>] <span class="op">=</span> [pyo.value(m.x1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x2'</span>] <span class="op">=</span> [pyo.value(m.x2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># placeholder</span></span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y1'</span>] <span class="op">=</span> [<span class="dv">0</span> <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y2'</span>] <span class="op">=</span> sol[<span class="st">'h'</span>]</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'r'</span>] <span class="op">=</span> [<span class="va">False</span> <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pyomo implementation</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_simple(data):</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""simple strip packing, but useful to study good/new neighboor constraints later"""</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># simple upper bound</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    w_bound <span class="op">=</span> data[<span class="st">'data'</span>][<span class="st">'w'</span>].<span class="bu">sum</span>()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># instanciate model</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel(data[<span class="st">'model_name'</span>])</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    m.I <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> data[<span class="st">'data'</span>].index, doc <span class="op">=</span> <span class="st">'items'</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    m.Order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.I <span class="op">*</span> m.I, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j: i<span class="op">&lt;</span>j)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vars</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    m.x1 <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,w_bound))</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    m.x2 <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.NonNegativeReals, bounds <span class="op">=</span> (<span class="dv">0</span>,w_bound))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    m.W <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.NonNegativeReals, doc <span class="op">=</span> <span class="st">'total width, to be optimized'</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    m.r <span class="op">=</span> pyo.Var(domain <span class="op">=</span> pyo.Boolean, initialize <span class="op">=</span> <span class="va">False</span>, doc <span class="op">=</span> <span class="st">'not used in no rotation model'</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    m.OBJ <span class="op">=</span> pyo.Objective(expr <span class="op">=</span> m.W, sense <span class="op">=</span> pyo.minimize)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># param</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> w(m,i):</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'w'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I, doc <span class="op">=</span> <span class="st">'determines box i size'</span>)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> bounding_box(m,i):</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.w[i]</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I, doc <span class="op">=</span> <span class="st">'defines total width, to be optimized'</span>)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> total_width(m,i):</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">&lt;=</span> m.W</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.Order, xor<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> no_overlap(m, i, j):</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [m.x2[i] <span class="op">&lt;=</span> m.x1[j],</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>                m.x2[j] <span class="op">&lt;=</span> m.x1[i]]</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>       </span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">"gdp.bigm"</span>).apply_to(m)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose solver and apply solver</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> pyo.SolverFactory(data[<span class="st">'solver'</span>])</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    solver.solve(m)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract solution</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> data[<span class="st">'data'</span>].copy()</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract coords from solution</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x1'</span>] <span class="op">=</span> [pyo.value(m.x1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x2'</span>] <span class="op">=</span> [pyo.value(m.x2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># placeholder</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y1'</span>] <span class="op">=</span> [<span class="dv">0</span> <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y2'</span>] <span class="op">=</span> sol[<span class="st">'h'</span>]</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'r'</span>] <span class="op">=</span> [<span class="va">False</span> <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> SP_1(data)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># visualise sollution</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plot_solution(sol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> SP_simple(data)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># visualise sollution</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>plot_solution(sol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 1.66 s, sys: 488 ms, total: 2.15 s
+Wall time: 39min 5s</code></pre>
+</div>
 <div class="cell-output cell-output-display">
-<p><img src="02_strippacking_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+<p><img src="02_strippacking_files/figure-html/cell-9-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -524,95 +564,262 @@ s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
 \end{array}     
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_rot(data):</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""strip packing with rotation"""</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    W_ub <span class="op">=</span> data[<span class="st">'data'</span>][<span class="st">'w'</span>].<span class="bu">sum</span>()</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    m.I <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> data[<span class="st">'data'</span>].index, doc <span class="op">=</span> <span class="st">'plants'</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    m.Order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.I <span class="op">*</span> m.I, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j:i<span class="op">&lt;</span>j, doc <span class="op">=</span><span class="st">'ordering of plants'</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vars</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    m.W <span class="op">=</span> pyo.Var(bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'total optimal width'</span>)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    m.x1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on x axis'</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    m.x2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on x axis'</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    m.y1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on y axis'</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    m.y2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on y axis'</span>)</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    m.r <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.Boolean)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Objective</span>()</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> minimal_width(m):</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.W</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># param</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> w(m,i):</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'w'</span>].values[<span class="dv">0</span>]</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> h(m,i):</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'h'</span>].values[<span class="dv">0</span>]</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c1(m,i):</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">&lt;=</span> m.W</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> y1_loc(m,i):</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.y1[i] <span class="op">==</span> <span class="dv">0</span></span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.I)</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> rotation(m,i):</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">False</span>, </span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.w[i],</span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.h[i]</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>            ],</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">True</span>,</span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.h[i],</span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.w[i]</span>
-<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>            ]</span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>        ]</span>
-<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.Order)</span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> no_overlap(m,i,j):</span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>            [m.x2[i] <span class="op">&lt;=</span> m.x1[j]],</span>
-<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>            [m.x2[j] <span class="op">&lt;=</span> m.x1[i]]</span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>        ]</span>
-<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">"gdp.bigm"</span>).apply_to(m)</span>
-<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose solver and apply solver</span></span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> pyo.SolverFactory(data[<span class="st">'solver'</span>])</span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    solver.solve(m)</span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract solution</span></span>
-<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> data[<span class="st">'data'</span>].copy()</span>
-<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract coords from solution</span></span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x1'</span>] <span class="op">=</span> [pyo.value(m.x1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x2'</span>] <span class="op">=</span> [pyo.value(m.x2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># placeholder</span></span>
-<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y1'</span>] <span class="op">=</span> [pyo.value(m.y1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y2'</span>] <span class="op">=</span> [pyo.value(m.y2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'r'</span>] <span class="op">=</span> [pyo.value(m.r[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
-<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_rot(data):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""strip packing with rotation"""</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    W_ub <span class="op">=</span> data[<span class="st">'data'</span>][<span class="st">'w'</span>].<span class="bu">sum</span>()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel()</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    m.I <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> data[<span class="st">'data'</span>].index, doc <span class="op">=</span> <span class="st">'plants'</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    m.Order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.I <span class="op">*</span> m.I, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j:i<span class="op">&lt;</span>j, doc <span class="op">=</span><span class="st">'ordering of plants'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vars</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    m.W <span class="op">=</span> pyo.Var(bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'total optimal width'</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    m.x1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on x axis'</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    m.x2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on x axis'</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    m.y1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on y axis'</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    m.y2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on y axis'</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    m.r <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.Boolean)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Objective</span>()</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> minimal_width(m):</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.W</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># param</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> w(m,i):</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'w'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> h(m,i):</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'h'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> c1(m,i):</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">&lt;=</span> m.W</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> y1_loc(m,i):</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.y1[i] <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.I)</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> rotation(m,i):</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">False</span>, </span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.w[i],</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.h[i]</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">True</span>,</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.h[i],</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.w[i]</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.Order)</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> no_overlap(m,i,j):</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>            [m.x2[i] <span class="op">&lt;=</span> m.x1[j]],</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>            [m.x2[j] <span class="op">&lt;=</span> m.x1[i]]</span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">"gdp.bigm"</span>).apply_to(m)</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose solver and apply solver</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> pyo.SolverFactory(data[<span class="st">'solver'</span>])</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    solver.solve(m)</span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract solution</span></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> data[<span class="st">'data'</span>].copy()</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract coords from solution</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x1'</span>] <span class="op">=</span> [pyo.value(m.x1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x2'</span>] <span class="op">=</span> [pyo.value(m.x2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># placeholder</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y1'</span>] <span class="op">=</span> [pyo.value(m.y1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y2'</span>] <span class="op">=</span> [pyo.value(m.y2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'r'</span>] <span class="op">=</span> [pyo.value(m.r[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sol_rot <span class="op">=</span> SP_2(data)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plot_solution(sol_rot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sol_rot <span class="op">=</span> SP_rot(data)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plot_solution(sol_rot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 4.74 s, sys: 2.93 s, total: 7.67 s
+Wall time: 2h 43min 43s</code></pre>
+</div>
 <div class="cell-output cell-output-display">
-<p><img src="02_strippacking_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+<p><img src="02_strippacking_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
 <section id="add-packing-in-2-dimensions" class="level2">
 <h2 class="anchored" data-anchor-id="add-packing-in-2-dimensions">Add packing in 2 dimensions</h2>
-<p>Again obviously we can reduce the required total width if we allow to pack boxes in 2 dimensions, e.g.&nbsp;we place a box behind an</p>
+<p>Again obviously we can reduce the required total width if we allow to pack boxes in 2 dimensions, e.g.&nbsp;we place a box behind another.</p>
+<section id="additional-constraints" class="level3">
+<h3 class="anchored" data-anchor-id="additional-constraints">Additional constraints</h3>
+<ul>
+<li>upper <span class="math inline">\(y\)</span> coordinate of box does not exceed shelf depth <span class="math inline">\(D\)</span></li>
+<li>no overlap of boxes in y-axis</li>
+</ul>
+</section>
+<section id="model-1" class="level3">
+<h3 class="anchored" data-anchor-id="model-1">Model</h3>
+<p><span class="math display">\[
+\begin{array}{lll}
+\min &amp; W &amp; \\
+s.t. &amp; x_{i,2} \leq W &amp; \forall i\\
+     &amp; y_{i,2} \leq D &amp; \forall i\\
+     &amp; x_{i,1},x_{i,2}, y_{i,1}, y_{i,2} \geq 0 &amp; \forall i\\
+     &amp; y_{i,1} = 0 &amp; \forall i\\
+     &amp; [x_{i,2}\leq x_{j,1}] \vee
+       [x_{j,2} \leq x_{i,1}] \vee       
+       [y_{i,2}\leq y_{j,1}] \vee
+       [y_{j,2} \leq y_{i,1}]
+       &amp; \forall i &lt; j\\
+     &amp; \left[ \begin{array}{ll}
+     r_i= &amp; false\\
+     x_{i,2} = &amp; x_{i,1} + w_i\\
+     y_{i,2} = &amp; y_{i,1} + h_i
+     \end{array} \right] \vee
+     \left[ \begin{array}{ll}
+     r_i= &amp; true\\
+     x_{i,2} = &amp; x_{i,1} + h_i\\
+     y_{i,2} = &amp; y_{i,1} + w_i
+     \end{array}\right] &amp; \forall i &lt; j
+\end{array}     
+\]</span></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'data':     w   h
+ 0  29  15
+ 1  56   9
+ 2  82  13
+ 3  13  87
+ 4  35   9
+ 5  53  63
+ 6  25  62
+ 7  23  52
+ 8  21  43
+ 9  12  77,
+ 'solver': 'cbc',
+ 'model_name': 'strip_packing',
+ 'shelf_depth': 174}</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_2dim_rot(data):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""strip packing with rotation in 2 dimension"""</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    W_ub <span class="op">=</span> data[<span class="st">'data'</span>][<span class="st">'w'</span>].<span class="bu">sum</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> pyo.ConcreteModel()</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sets</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    m.I <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> data[<span class="st">'data'</span>].index, doc <span class="op">=</span> <span class="st">'plants'</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    m.Order <span class="op">=</span> pyo.Set(initialize <span class="op">=</span> m.I <span class="op">*</span> m.I, <span class="bu">filter</span> <span class="op">=</span> <span class="kw">lambda</span> m,i,j:i<span class="op">&lt;</span>j, doc <span class="op">=</span><span class="st">'ordering of plants'</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vars</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    m.W <span class="op">=</span> pyo.Var(bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'total optimal width'</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    m.x1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on x axis'</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    m.x2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on x axis'</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    m.y1 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'LHS of item i on y axis'</span>)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    m.y2 <span class="op">=</span> pyo.Var(m.I, bounds <span class="op">=</span> (<span class="dv">0</span>,W_ub), doc <span class="op">=</span> <span class="st">'RHS of item i on y axis'</span>)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    m.r <span class="op">=</span> pyo.Var(m.I, domain <span class="op">=</span> pyo.Boolean)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># objective</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Objective</span>()</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> minimal_width(m):</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.W</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># param</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> w(m,i):</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'w'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Param</span>(m.I)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> h(m,i):</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> data[<span class="st">'data'</span>].<span class="bu">filter</span>(items <span class="op">=</span> [i], axis <span class="op">=</span> <span class="dv">0</span>)[<span class="st">'h'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    m.shelf_depth <span class="op">=</span> pyo.Param(mutable <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>                              initialize <span class="op">=</span> data[<span class="st">'shelf_depth'</span>])</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># constraints</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> minimize_width(m,i):</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.x2[i] <span class="op">&lt;=</span> m.W</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Constraint</span>(m.I)</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> max_heigth(m,i):</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> m.y2[i] <span class="op">&lt;=</span> m.shelf_depth</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.I)</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> rotation(m,i):</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">False</span>, </span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.w[i],</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.h[i]</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>            [m.r[i] <span class="op">==</span> <span class="va">True</span>,</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>             m.x2[i] <span class="op">==</span> m.x1[i] <span class="op">+</span> m.h[i],</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>             m.y2[i] <span class="op">==</span> m.y1[i] <span class="op">+</span> m.w[i]</span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">@m.Disjunction</span>(m.Order)</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> no_overlap(m,i,j):</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>            [m.x2[i] <span class="op">&lt;=</span> m.x1[j]],</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>            [m.x2[j] <span class="op">&lt;=</span> m.x1[i]],</span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a>            [m.y2[i] <span class="op">&lt;=</span> m.y1[j]],</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>            [m.y2[j] <span class="op">&lt;=</span> m.y1[i]]</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    pyo.TransformationFactory(<span class="st">"gdp.bigm"</span>).apply_to(m)</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose solver and apply solver</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    solver <span class="op">=</span> pyo.SolverFactory(data[<span class="st">'solver'</span>])</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>    solver.solve(m)</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract solution</span></span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a>    sol <span class="op">=</span> data[<span class="st">'data'</span>].copy()</span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract coords from solution</span></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x1'</span>] <span class="op">=</span> [pyo.value(m.x1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'x2'</span>] <span class="op">=</span> [pyo.value(m.x2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># placeholder</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y1'</span>] <span class="op">=</span> [pyo.value(m.y1[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'y2'</span>] <span class="op">=</span> [pyo.value(m.y2[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>    sol[<span class="st">'r'</span>] <span class="op">=</span> [pyo.value(m.r[i]) <span class="cf">for</span> i <span class="kw">in</span> m.I]</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sol</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>sol_rot <span class="op">=</span> SP_2dim_rot(data)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plot_solution(sol_rot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 3.23 s, sys: 1.36 s, total: 4.59 s
+Wall time: 2h 59min 8s</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="02_strippacking_files/figure-html/cell-14-output-2.png" class="img-fluid"></p>
+</div>
+</div>
 
 
+</section>
 </section>
 </section>
 

@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/nbs/20230710_garden/02_strippacking.html",
       "/nbs/20230710_garden/01_knappsack.html",
       "/nbs/SensitivityAnalysis/01_sensitivity_analysis.html",
       "/nbs/20230308_scip/03_multicommodity_transportProblem.html",
