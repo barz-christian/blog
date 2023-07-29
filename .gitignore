@@ -1,1 +1,3 @@
 /.quarto/
+/nbs/_docs/
+.ipynb_checkpoints

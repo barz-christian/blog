@@ -200,7 +200,7 @@ div.csl-indent {
                           <div class="quarto-categories">
                 <div class="quarto-category">pyomo</div>
                 <div class="quarto-category">modeling</div>
-                <div class="quarto-category">scheduling</div>
+                <div class="quarto-category">Minimum cost flow</div>
               </div>
                   </div>
   </div>
@@ -233,7 +233,11 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#example---sugar-cane-production" id="toc-example---sugar-cane-production" class="nav-link active" data-scroll-target="#example---sugar-cane-production">Example - Sugar cane production</a></li>
+  <li><a href="#example---sugar-cane-production" id="toc-example---sugar-cane-production" class="nav-link active" data-scroll-target="#example---sugar-cane-production">Example - Sugar cane production</a>
+  <ul class="collapse">
+  <li><a href="#problem-description" id="toc-problem-description" class="nav-link" data-scroll-target="#problem-description">Problem description</a></li>
+  <li><a href="#remarks" id="toc-remarks" class="nav-link" data-scroll-target="#remarks">Remarks</a></li>
+  </ul></li>
   <li><a href="#algebraic-model" id="toc-algebraic-model" class="nav-link" data-scroll-target="#algebraic-model">algebraic model</a>
   <ul class="collapse">
   <li><a href="#sets" id="toc-sets" class="nav-link" data-scroll-target="#sets">sets</a></li>
@@ -260,10 +264,22 @@ div.csl-indent {
 </div>
 <section id="example---sugar-cane-production" class="level1">
 <h1>Example - Sugar cane production</h1>
-<p>Harvested sugar cane is immediately transported to a sugar house for further processing, because sugar decreases rapidly trough fermentation.</p>
+<section id="problem-description" class="level2">
+<h2 class="anchored" data-anchor-id="problem-description">Problem description</h2>
+<p>Because sugar cane decreases rapidly trough fermentation, harvested sugar cane is transported to a sugar house in wagons on rail network for further processing immediately.</p>
 <p>Suppose we have 11 wagons with sugar, all loaded with the same quantity. Moreover we know the hourly loss of sugar in kg per hour and the remaining live span in hour of the lot in every wagon. (see table below)</p>
-<p>We as</p>
+<p>Suppose further that we have 3 equivalent production lines in the sugar house to process the lot and that processing a lot takes two hours. Moreover the processing must be finished at latest at the end of the life span of the wagon load.</p>
+<p>We are asked to determine a production schedule for the currently available lots that minimizes the total loss of sugar.</p>
+</section>
+<section id="remarks" class="level2">
+<h2 class="anchored" data-anchor-id="remarks">Remarks</h2>
 <p>This example is from <span class="citation" data-cites="gueret1999applications">(<a href="#ref-gueret1999applications" role="doc-biblioref">Guéret, Prins, and Sevaux 1999, chap. 6.4</a>)</span>.</p>
+<p>We give</p>
+<ul>
+<li>the algebraic model formulation</li>
+<li>an implemetation in pyomo</li>
+<li>give an optimal solution</li>
+</ul>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -348,6 +364,7 @@ div.csl-indent {
 </div>
 </div>
 </section>
+</section>
 <section id="algebraic-model" class="level1">
 <h1>algebraic model</h1>
 <ul>
@@ -355,6 +372,9 @@ div.csl-indent {
 </ul>
 <section id="sets" class="level2">
 <h2 class="anchored" data-anchor-id="sets">sets</h2>
+<ul>
+<li><span class="math inline">\(wagons = \{1,\ldots,NW\}\)</span> set of wagons</li>
+</ul>
 </section>
 <section id="variables" class="level2">
 <h2 class="anchored" data-anchor-id="variables">variables</h2>
@@ -364,6 +384,7 @@ div.csl-indent {
 <ul>
 <li>NL number of production lines</li>
 <li>NW number of wagons</li>
+<li>NS maximal number of time slots</li>
 </ul>
 <div class="cell">
 <details>
@@ -513,61 +534,6 @@ div.csl-indent {
   </tbody>
 </table>
 </div>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m.process.pprint()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>process : 1 iff wagon w is assigned to slot s
-    Size=44, Index=process_index
-    Key     : Lower : Value : Upper : Fixed : Stale : Domain
-     (1, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (1, 2) :     0 :   1.0 :     1 : False : False : Binary
-     (1, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (1, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (2, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (2, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (2, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (2, 4) :     0 :   1.0 :     1 : False : False : Binary
-     (3, 1) :     0 :   1.0 :     1 : False : False : Binary
-     (3, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (3, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (3, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (4, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (4, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (4, 3) :     0 :   1.0 :     1 : False : False : Binary
-     (4, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (5, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (5, 2) :     0 :   1.0 :     1 : False : False : Binary
-     (5, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (5, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (6, 1) :     0 :   1.0 :     1 : False : False : Binary
-     (6, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (6, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (6, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (7, 1) :     0 :   1.0 :     1 : False : False : Binary
-     (7, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (7, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (7, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (8, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (8, 2) :     0 :   1.0 :     1 : False : False : Binary
-     (8, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (8, 4) :     0 :   0.0 :     1 : False : False : Binary
-     (9, 1) :     0 :   0.0 :     1 : False : False : Binary
-     (9, 2) :     0 :   0.0 :     1 : False : False : Binary
-     (9, 3) :     0 :   0.0 :     1 : False : False : Binary
-     (9, 4) :     0 :   1.0 :     1 : False : False : Binary
-    (10, 1) :     0 :   0.0 :     1 : False : False : Binary
-    (10, 2) :     0 :   0.0 :     1 : False : False : Binary
-    (10, 3) :     0 :   1.0 :     1 : False : False : Binary
-    (10, 4) :     0 :   0.0 :     1 : False : False : Binary
-    (11, 1) :     0 :   0.0 :     1 : False : False : Binary
-    (11, 2) :     0 :   0.0 :     1 : False : False : Binary
-    (11, 3) :     0 :   1.0 :     1 : False : False : Binary
-    (11, 4) :     0 :   0.0 :     1 : False : False : Binary</code></pre>
 </div>
 </div>
 
