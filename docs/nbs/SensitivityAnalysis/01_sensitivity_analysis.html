@@ -441,158 +441,24 @@ s.t. &amp; \sum_{i\in type} time_{ij} \cdot x_i \leq avail_j &amp; \forall j\in 
 <li>A nonbinding constraint will have a zero shadow price, as its right hand side is not constraining the optimal solution.</li>
 </ul>
 <p>This is of course intuitivly clear as relaxing a binding constraint, will enlarge the feasible region.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m.pprint()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>3 Set Declarations
-    process : Size=1, Index=None, Ordered=Insertion
-        Key  : Dimen : Domain : Size : Members
-        None :     1 :    Any :    3 : {'slicing', 'frying', 'packing'}
-    time_index : Size=1, Index=None, Ordered=True
-        Key  : Dimen : Domain        : Size : Members
-        None :     2 : types*process :    6 : {('plain', 'slicing'), ('plain', 'frying'), ('plain', 'packing'), ('mexican', 'slicing'), ('mexican', 'frying'), ('mexican', 'packing')}
-    types : Size=1, Index=None, Ordered=Insertion
-        Key  : Dimen : Domain : Size : Members
-        None :     1 :    Any :    2 : {'plain', 'mexican'}
-
-3 Param Declarations
-    avail : available processing time for process j
-        Size=3, Index=process, Domain=Any, Default=None, Mutable=False
-        Key     : Value
-         frying :   480
-        packing :   330
-        slicing :   345
-    profit : net profits for product i
-        Size=2, Index=types, Domain=Any, Default=None, Mutable=False
-        Key     : Value
-        mexican :   1.5
-          plain :   2.0
-    time : processing time of product i in process j
-        Size=6, Index=time_index, Domain=Any, Default=None, Mutable=False
-        Key                    : Value
-         ('mexican', 'frying') :     5
-        ('mexican', 'packing') :     2
-        ('mexican', 'slicing') :     4
-           ('plain', 'frying') :     4
-          ('plain', 'packing') :     4
-          ('plain', 'slicing') :     2
-
-2 Var Declarations
-    optimaltime : Size=3, Index=process
-        Key     : Lower : Value : Upper : Fixed : Stale : Domain
-         frying :     0 : 480.0 :  None : False : False : NonNegativeReals
-        packing :     0 : 330.0 :  None : False : False : NonNegativeReals
-        slicing :     0 : 315.0 :  None : False : False : NonNegativeReals
-    x : produced packages of chip type i
-        Size=2, Index=types
-        Key     : Lower : Value : Upper : Fixed : Stale : Domain
-        mexican :     0 :  50.0 :  None : False : False : NonNegativeReals
-          plain :     0 :  57.5 :  None : False : False : NonNegativeReals
-
-1 Objective Declarations
-    OBJ : Size=1, Index=None, Active=True
-        Key  : Active : Sense    : Expression
-        None :   True : maximize : 2.0*x[plain] + 1.5*x[mexican]
-
-2 Constraint Declarations
-    c : Size=3, Index=process, Active=True
-        Key     : Lower : Body                      : Upper : Active
-         frying :  -Inf : 4*x[plain] + 5*x[mexican] : 480.0 :   True
-        packing :  -Inf : 4*x[plain] + 2*x[mexican] : 330.0 :   True
-        slicing :  -Inf : 2*x[plain] + 4*x[mexican] : 345.0 :   True
-    opttime : Size=3, Index=process, Active=True
-        Key     : Lower : Body                                               : Upper : Active
-         frying :   0.0 :  optimaltime[frying] - (4*x[plain] + 5*x[mexican]) :   0.0 :   True
-        packing :   0.0 : optimaltime[packing] - (4*x[plain] + 2*x[mexican]) :   0.0 :   True
-        slicing :   0.0 : optimaltime[slicing] - (2*x[plain] + 4*x[mexican]) :   0.0 :   True
-
-1 Suffix Declarations
-    dual : Direction=Suffix.IMPORT, Datatype=Suffix.FLOAT
-        Key              : Value
-               c[frying] : 0.16666667
-              c[packing] : 0.33333333
-              c[slicing] :       -0.0
-         opttime[frying] :       -0.0
-        opttime[packing] :       -0.0
-        opttime[slicing] :       -0.0
-
-12 Declarations: types process x time_index time avail profit OBJ c dual optimaltime opttime</code></pre>
-</div>
-</div>
 <section id="example-shadow-prices-for-chips-production" class="level3">
 <h3 class="anchored" data-anchor-id="example-shadow-prices-for-chips-production">Example: shadow prices for chips production</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"printing duals"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> m.component_objects(pyo.Constraint, active<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"   Constraint"</span>, c)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> c:</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"      "</span>, index, m.dual[c[index]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"printing duals"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> m.component_objects(pyo.Constraint, active<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"   Constraint"</span>, c)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> c:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"      "</span>, index, m.dual[c[index]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>printing duals
    Constraint c
        slicing -0.0
-       slicing -0.0
        frying 0.16666667
-       frying 0.16666667
-       packing 0.33333333
        packing 0.33333333
    Constraint opttime
        slicing -0.0
-       slicing -0.0
        frying -0.0
-       frying -0.0
-       packing -0.0
        packing -0.0</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Constraint  value  lslack  uslack    dual"</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> [model.demand, model.laborA, model.laborB]:</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(c, <span class="bu">str</span>.<span class="bu">format</span>(c(), c.lslack(), c.uslack(), model.dual[c]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> m.component_objects(pyo.Constraint, active<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(c, <span class="bu">str</span>.<span class="bu">format</span>(c(), c.lslack(), c.uslack(), m.dual[c]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>TypeError: 'IndexedConstraint' object is not callable</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    c: {i:{<span class="st">'process'</span>:i,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">'optimal time'</span>: pyo.value(m.optimaltime[i]),</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">'upper bound'</span>: pyo.value(m.c[i].upper),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">'shadow price'</span>: m.dual[c[index]]</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>          }</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> c        </span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>       }</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> c <span class="kw">in</span> m.component_objects(pyo.Constraint, active<span class="op">=</span><span class="va">True</span>)  </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<pre><code>{&lt;pyomo.core.base.constraint.IndexedConstraint&gt;: {'slicing': {'process': 'slicing',
-   'optimal time': 315.0,
-   'upper bound': 345.0,
-   'shadow price': 0.33333333},
-  'frying': {'process': 'frying',
-   'optimal time': 480.0,
-   'upper bound': 480.0,
-   'shadow price': 0.33333333},
-  'packing': {'process': 'packing',
-   'optimal time': 330.0,
-   'upper bound': 330.0,
-   'shadow price': 0.33333333}},
- &lt;pyomo.core.base.constraint.IndexedConstraint&gt;: {'slicing': {'process': 'slicing',
-   'optimal time': 315.0,
-   'upper bound': 345.0,
-   'shadow price': -0.0},
-  'frying': {'process': 'frying',
-   'optimal time': 480.0,
-   'upper bound': 480.0,
-   'shadow price': -0.0},
-  'packing': {'process': 'packing',
-   'optimal time': 330.0,
-   'upper bound': 330.0,
-   'shadow price': -0.0}}}</code></pre>
 </div>
 </div>
 

@@ -249,6 +249,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#pyomo-implementation-2" id="toc-pyomo-implementation-2" class="nav-link" data-scroll-target="#pyomo-implementation-2">Pyomo implementation</a></li>
   </ul></li>
+  <li><a href="#scip-implementation" id="toc-scip-implementation" class="nav-link" data-scroll-target="#scip-implementation">SCIP implementation</a></li>
   </ul>
 </nav>
     </div>
@@ -847,9 +848,52 @@ Wall time: 271 ms</code></pre>
 <p><img src="02_strippacking_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="scip-implementation" class="level1">
+<h1>SCIP implementation</h1>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyscipopt <span class="im">as</span> scip</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SP_SCIP(data):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> scip.Model(data[<span class="st">'model_name'</span>])</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>{'data':     w   h
+ 0  29  53
+ 1  56  25
+ 2  82  23
+ 3  13  21
+ 4  35  12,
+ 'solver': 'cbc',
+ 'model_name': 'strip_packing',
+ 'shelf_depth': 106}</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>SP_SCIP(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;pyscipopt.scip.Model object&gt;</code></pre>
+</div>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

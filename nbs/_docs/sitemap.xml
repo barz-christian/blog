@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://barz-christian.github.io/blog/20230710_garden/01_knappsack.html</loc>
-    <lastmod>2023-07-19T09:10:57.543Z</lastmod>
-  </url>
-  <url>
     <loc>https://barz-christian.github.io/blog/20220609_blending_models/01_blending.html</loc>
     <lastmod>2023-07-17T15:28:39.674Z</lastmod>
   </url>
@@ -18,6 +14,42 @@
   </url>
   <url>
     <loc>https://barz-christian.github.io/blog/20230710_garden/02_strippacking.html</loc>
-    <lastmod>2023-07-21T15:59:35.485Z</lastmod>
+    <lastmod>2023-12-03T07:39:19.502Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230710_garden/01_knappsack.html</loc>
+    <lastmod>2023-12-03T08:01:55.969Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20220621_jobshop/02_sugar_can_production.html</loc>
+    <lastmod>2023-12-03T08:04:22.194Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20221127_jupyter_test/index.html</loc>
+    <lastmod>2023-12-03T08:06:38.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230308_scip/01_SCIP_install.html</loc>
+    <lastmod>2023-12-03T08:08:35.455Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230308_scip/02_SCIP_transport_problem.html</loc>
+    <lastmod>2023-12-03T08:08:38.759Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230308_scip/03_multicommodity_transportProblem.html</loc>
+    <lastmod>2023-12-03T08:08:41.036Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230717_ORTools/01_intro_ORTools.html</loc>
+    <lastmod>2023-12-03T08:08:52.800Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/20230717_ORTools/03_basic_operations_CP_SAT.html</loc>
+    <lastmod>2023-12-03T08:09:19.208Z</lastmod>
+  </url>
+  <url>
+    <loc>https://barz-christian.github.io/blog/SensitivityAnalysis/01_sensitivity_analysis.html</loc>
+    <lastmod>2023-12-03T08:10:19.476Z</lastmod>
   </url>
 </urlset>
