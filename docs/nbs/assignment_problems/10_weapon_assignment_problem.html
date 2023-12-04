@@ -8,7 +8,7 @@
 
 <meta name="author" content="cbarz">
 <meta name="dcterms.date" content="2023-12-02">
-<meta name="description" content="The weapon target assignment problem">
+<meta name="description" content="The weapon target assignment problem can be decribed by a mixed integer non linear program (minlp). We will see how minlp can be implemented and solved using pyomo.">
 
 <title>../../blog - Weapon target assignment problem</title>
 <style>
@@ -175,7 +175,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <h1 class="title">Weapon target assignment problem</h1>
                   <div>
         <div class="description">
-          The weapon target assignment problem
+          The weapon target assignment problem can be decribed by a mixed integer non linear program (minlp). We will see how minlp can be implemented and solved using pyomo.
         </div>
       </div>
                           <div class="quarto-categories">
@@ -225,9 +225,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">example</a></li>
   <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a>
   <ul class="collapse">
-  <li><a href="#pyomo-expression-for-non-linear-models" id="toc-pyomo-expression-for-non-linear-models" class="nav-link" data-scroll-target="#pyomo-expression-for-non-linear-models">Pyomo expression for non linear models</a></li>
+  <li><a href="#pyomo-expressions-for-non-linear-models" id="toc-pyomo-expressions-for-non-linear-models" class="nav-link" data-scroll-target="#pyomo-expressions-for-non-linear-models">Pyomo expressions for non linear models</a></li>
   <li><a href="#some-modeling-tips" id="toc-some-modeling-tips" class="nav-link" data-scroll-target="#some-modeling-tips">Some modeling tips</a></li>
-  <li><a href="#implementation-remark" id="toc-implementation-remark" class="nav-link" data-scroll-target="#implementation-remark">implementation remark</a></li>
+  <li><a href="#two-implementation-remarks" id="toc-two-implementation-remarks" class="nav-link" data-scroll-target="#two-implementation-remarks">Two implementation remarks</a></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
@@ -274,7 +274,7 @@ s.t. &amp; \sum_j x_{ij} \leq W_i &amp;, \forall i \\
 </section>
 <section id="constraints" class="level3">
 <h3 class="anchored" data-anchor-id="constraints">constraints</h3>
-<p>Dont assign more weapons of type <span class="math inline">\(i\)</span> than available, i.e.&nbsp;<span class="math inline">\(W_i\)</span></p>
+<p>Dont assign more weapons of type <span class="math inline">\(i\)</span> than are available, i.e.&nbsp;<span class="math inline">\(W_i\)</span>.</p>
 </section>
 <section id="assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="assumptions">assumptions</h3>
@@ -341,11 +341,11 @@ s.t. &amp; \sum_j x_{ij} \leq W_i &amp;, \forall i \\
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'success probabilities:'</span>)</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Moreover we have given the probability that weapon i destroys target j:'</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>display(daten[<span class="st">'success_probability'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>success probabilities:</code></pre>
+<pre><code>Moreover we have given the probability that weapon i destroys target j:</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -387,10 +387,9 @@ s.t. &amp; \sum_j x_{ij} \leq W_i &amp;, \forall i \\
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
-<p>As the used model for the weapon assignment problem is nonlinear lets recall:</p>
-<section id="pyomo-expression-for-non-linear-models" class="level3">
-<h3 class="anchored" data-anchor-id="pyomo-expression-for-non-linear-models">Pyomo expression for non linear models</h3>
-<p>Write down a non linear problem in pyomo is easy:</p>
+<p>As the used model for the weapon assignment problem is nonlinear we briefly recall:</p>
+<section id="pyomo-expressions-for-non-linear-models" class="level3">
+<h3 class="anchored" data-anchor-id="pyomo-expressions-for-non-linear-models">Pyomo expressions for non linear models</h3>
 <table class="table">
 <thead>
 <tr class="header">
@@ -432,7 +431,7 @@ s.t. &amp; \sum_j x_{ij} \leq W_i &amp;, \forall i \\
 </tr>
 </tbody>
 </table>
-<p>moreover there more supported functions part of the pyomo package, e.g.&nbsp;trigonometric functions:</p>
+<p>There are more supported functions part of the pyomo package, e.g.&nbsp;trigonometric functions:</p>
 <ul>
 <li>https://static1.squarespace.com/static/5492d7f4e4b00040889988bd/t/57bd0faad482e927298cca8f/1472008110099/5_Nonlinear.pdf</li>
 </ul>
@@ -445,10 +444,10 @@ s.t. &amp; \sum_j x_{ij} \leq W_i &amp;, \forall i \\
 <li>scale model to avoid variables, contraints, derivatives with different scales</li>
 </ul>
 </section>
-<section id="implementation-remark" class="level3">
-<h3 class="anchored" data-anchor-id="implementation-remark">implementation remark</h3>
-<section id="solver-supports-minlp" class="level4">
-<h4 class="anchored" data-anchor-id="solver-supports-minlp">solver supports minlp</h4>
+<section id="two-implementation-remarks" class="level3">
+<h3 class="anchored" data-anchor-id="two-implementation-remarks">Two implementation remarks</h3>
+<section id="if-solver-supports-minlp" class="level4">
+<h4 class="anchored" data-anchor-id="if-solver-supports-minlp">If solver supports minlp</h4>
 <p>Some Sovlers can handle MINLPs like SCIP, hence after defining an non linear model in pyom, we can solve it as it were a linear model</p>
 <pre><code># define model
 model = pyo.ConcreteModel()
