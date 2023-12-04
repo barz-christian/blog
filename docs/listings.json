@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/nbs/assignment_problems/10_weapon_assignment_problem.html",
       "/nbs/20230710_garden/02_strippacking.html",
       "/nbs/20230710_garden/01_knappsack.html",
       "/nbs/SensitivityAnalysis/01_sensitivity_analysis.html",
